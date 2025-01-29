@@ -13,18 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('owners', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('person_id')->constrained('people');
             $table->timestamps();
         });
-
-        DB::table('roles')->insert([
-            ['nombre' => 'admin'],
-            ['nombre' => 'owner'],
-            ['nombre' => 'worker'],
-            ['nombre' => 'user'],
-        ]);
     }
 
     /**
@@ -34,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('owners');
     }
 };
