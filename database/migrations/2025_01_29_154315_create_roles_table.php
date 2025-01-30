@@ -20,10 +20,10 @@ return new class extends Migration
         });
 
         DB::table('roles')->insert([
-            ['nombre' => 'admin'],
-            ['nombre' => 'owner'],
-            ['nombre' => 'worker'],
-            ['nombre' => 'user'],
+            ['name' => 'admin'],
+            ['name' => 'owner'],
+            ['name' => 'worker'],
+            ['name' => 'user'],
         ]);
     }
 
