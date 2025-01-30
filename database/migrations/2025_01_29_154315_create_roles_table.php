@@ -24,6 +24,7 @@ return new class extends Migration
             ['name' => 'owner'],
             ['name' => 'worker'],
             ['name' => 'user'],
+            ['name' => 'guest'],
         ]);
     }
 
