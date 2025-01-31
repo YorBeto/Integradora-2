@@ -8,31 +8,36 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class AuthController extends Controller
 {
-    public function login(Request $request){
-
+    public function login(Request $request)
+    {
         $credentials = $request->only('email', 'password');
-
-        $user = User::where('email', $credentials['email'])->first();
     
+        $user = User::where('email', $credentials['email'])->first();
+        
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
     
     
+        $role = $user->roles()->first();  
+    
         $token = JWTAuth::claims([
             'user' => $user,
-        ])->fromUser($user);
-    
-        return response()->json([
-            'token' => $token,
-            'token_type' => 'bearer',
+            ])->fromUser($user);
+            
+            return response()->json([
+                'token' => $token,
+                'token_type' => 'bearer',
+                'role' => $role ? $role->name : null,  
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
         ]);
     }
-
+    
     public function logout()
     {
         $token = JWTAuth::getToken();

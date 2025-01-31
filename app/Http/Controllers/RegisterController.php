@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use App\Models\User;
+use App\Models\Person;
 use App\Mail\AccountActivationMail;
 
 class RegisterController extends Controller
@@ -29,8 +30,7 @@ class RegisterController extends Controller
         }
 
         try {
-            DB::statement("CALL RegisterUser(?, ?, ?, ?, ?, ?, ?)", [
-                $request->fingerprint,
+            DB::statement("CALL RegisterUser(?, ?, ?, ?, ?, ?)", [
                 $request->email,
                 Hash::make($request->password),
                 $request->name,
@@ -49,8 +49,11 @@ class RegisterController extends Controller
                 now()->addMinutes(60),
                 ['user' => $user->id]
             );
-
-            Mail::to($user->email)->send(new AccountActivationMail($user, $activationLink));
+            
+            $persona = Person::where('user_id', $user->id)->first();
+            
+            Mail::to($user->email)->send(new AccountActivationMail($persona, $activationLink));
+            
 
             return response()->json([
                 'message' => 'Usuario registrado correctamente. Revisa tu correo para activar tu cuenta.'
