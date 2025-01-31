@@ -12,12 +12,12 @@ class AccountActivationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $person;
+    public $persona;
     public $activationLink;
 
-    public function __construct($person, $activationLink)
+    public function __construct(Person $persona, $activationLink)
     {
-        $this->person = $person;
+        $this->persona = $persona;
         $this->activationLink = $activationLink;
     }
 
@@ -26,7 +26,7 @@ class AccountActivationMail extends Mailable
         return $this->subject('Activa tu cuenta')
                     ->view('emails.activation')
                     ->with([
-                        'user' => $this->person->name,
+                        'user' => $this->persona,
                         'activationLink' => $this->activationLink
                     ]);
     }
