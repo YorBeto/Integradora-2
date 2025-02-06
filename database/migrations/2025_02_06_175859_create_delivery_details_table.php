@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('owners', function (Blueprint $table) {
-            $table->id();
-            $table->string('fingerprint')->nullable();
-            $table->foreignId('person_id')->constrained('people');
+        Schema::create('delivery_details', function (Blueprint $table) {
+            $table->foreignId('delivery_id')->constrained('deliveries'); // ID de la entrega
+            $table->foreignId('product_id')->constrained('products'); // ID del producto
+            $table->integer('quantity'); // Cantidad del producto
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('owners');
+        Schema::dropIfExists('delivery_details');
     }
 };

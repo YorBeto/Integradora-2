@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('owners_stores', function (Blueprint $table) {
-            $table->foreignId('owner_id')->constrained('owners');
-            $table->foreignId('store_id')->constrained('stores');
+        Schema::create('order_details', function (Blueprint $table) {
+            $table->foreignId('order_id')->constrained('orders'); // ID del pedido
+            $table->foreignId('product_id')->constrained('products'); // ID del producto
+            $table->integer('quantity'); // Cantidad del producto
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('owners_stores');
+        Schema::dropIfExists('order_details');
     }
 };
