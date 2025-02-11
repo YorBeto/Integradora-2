@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -19,6 +20,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
+
+        DB::table('role_user')->insert([
+            ['role_id' => 1, 'user_id' => 1]
+        ]);
     }
 
     /**

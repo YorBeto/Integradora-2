@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('workers', function (Blueprint $table) {
             $table->id();
             $table->string('RFID')->nullable();
+            $table->string('RFC')->nullable();
+            $table->string('NSS')->nullable();
             $table->foreignId('person_id')->constrained('people');
             $table->timestamps();
         });
