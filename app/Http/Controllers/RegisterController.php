@@ -62,4 +62,45 @@ class RegisterController extends Controller
             return response()->json(['error' => 'Error al registrar usuario', 'details' => $e->getMessage()], 500);
         }
     }
+
+public function registerWorker(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|min:8',
+        'name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'birth_date' => 'required|date',
+        'phone' => 'nullable|string|max:20',
+        'RFID' => 'nullable|string|max:255',
+        'RFC' => 'nullable|string|max:255',
+        'NSS' => 'nullable|string|max:255'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
+
+    $hashedPassword = Hash::make($request->password);
+
+    try {
+        DB::statement("CALL RegisterWorker(?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+            $request->email,
+            $hashedPassword,
+            $request->name,
+            $request->last_name,
+            $request->birth_date,
+            $request->phone,
+            $request->RFID,
+            $request->RFC,
+            $request->NSS
+        ]);
+
+        return response()->json(['message' => 'Trabajador registrado exitosamente'], 201);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al registrar trabajador', 'details' => $e->getMessage()], 500);
+    }
+}
+
 }
