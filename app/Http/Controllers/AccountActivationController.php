@@ -3,46 +3,48 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use App\Models\Role;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
+use App\Models\User;
 
 class AccountActivationController extends Controller
 {
-public function activateAccount(Request $request, $userId)
-{
-    $user = User::find($userId);
+    public function activateAccount(Request $request)
+    {
+        // Decodificar el email desde la URL
+        $email = base64_decode($request->query('email'));
 
-    if (!$user) {
-        return response()->json(['error' => 'Usuario no encontrado.'], 404);
+        // Verificar si el usuario existe
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'El usuario no existe o el enlace es inválido'], 404);
+        }
+
+        // Verificar si el usuario ya está activado
+        if ($user->email_verified_at !== null) {
+            return response()->json(['message' => 'La cuenta ya está activada'], 200);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Actualizar el campo email_verified_at con la fecha actual y cambiar el rol a worker
+            $user->update([
+                'email_verified_at' => Carbon::now(),
+            ]);
+
+            // Cambiar el rol del usuario a "worker" (role_id = 2)
+            DB::table('role_user')
+                ->where('user_id', $user->id)
+                ->update(['role_id' => 2]);
+
+            DB::commit();
+
+            return response()->json(['message' => 'Cuenta activada con éxito'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Error al activar la cuenta', 'details' => $e->getMessage()], 500);
+        }
     }
-
-    if ($user->email_verified_at) {
-        return response()->json(['message' => 'La cuenta ya está activada.'], 200);
-    }
-
-    $user->email_verified_at = now();
-    $user->save();
-
-    $userRole = Role::where('name', 'user')->first();
-
-    if (!$userRole) {
-        return response()->json(['error' => 'Rol "user" no encontrado.'], 500);
-    }
-
-    DB::table('roles_users')
-        ->where('user_id', $user->id)
-        ->delete();
-
-    DB::table('roles_users')->insert([
-        'user_id' => $user->id,
-        'rol_id' => $userRole->id,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-
-    return response()->json(['message' => 'Cuenta activada y rol actualizado a "user".'], 200);
-}
-
 }

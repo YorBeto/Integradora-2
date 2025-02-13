@@ -6,19 +6,20 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Person;
 
 class AccountActivationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $persona;
+    public $name;
     public $activationLink;
+    public $password;
 
-    public function __construct(Person $persona, $activationLink)
+    public function __construct($name, $activationLink, $password)
     {
-        $this->persona = $persona;
+        $this->name = $name;
         $this->activationLink = $activationLink;
+        $this->password = $password;
     }
 
     public function build()
@@ -26,8 +27,9 @@ class AccountActivationMail extends Mailable
         return $this->subject('Activa tu cuenta')
                     ->view('emails.activation')
                     ->with([
-                        'user' => $this->persona,
-                        'activationLink' => $this->activationLink
+                        'name' => $this->name,
+                        'activationLink' => $this->activationLink,
+                        'password' => $this->password
                     ]);
     }
 }

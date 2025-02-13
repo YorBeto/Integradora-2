@@ -7,100 +7,57 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use App\Models\User;
-use App\Models\Person;
 use App\Mail\AccountActivationMail;
 
 class RegisterController extends Controller
 {
-    public function register(Request $request)
+    public function registerWorker(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'name' => 'required|string',
-            'last_name' => 'required|string',
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'birth_date' => 'required|date',
-            'phone' => 'nullable|string',
+            'phone' => 'nullable|string|max:20',
+            'RFID' => 'nullable|string|max:255',
+            'RFC' => 'nullable|string|max:255',
+            'NSS' => 'nullable|string|max:255'
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        $randomPassword = Str::random(10); // Generar una contraseña aleatoria
+        $hashedPassword = Hash::make($randomPassword);
+
         try {
-            DB::statement("CALL RegisterUser(?, ?, ?, ?, ?, ?)", [
+            // Insertar usuario con rol de "user" (role_id = 3)
+            DB::statement("CALL RegisterWorker(?, ?, ?, ?, ?, ?, ?, ?, ?)", [
                 $request->email,
-                Hash::make($request->password),
+                $hashedPassword,
                 $request->name,
                 $request->last_name,
                 $request->birth_date,
-                $request->phone
+                $request->phone,
+                $request->RFID,
+                $request->RFC,
+                $request->NSS
             ]);
 
-            $user = User::where('email', $request->email)->first();
-            if (!$user) {
-                return response()->json(['error' => 'Usuario no encontrado.'], 404);
-            }
+            // Generar enlace de activación con email codificado
+            $encodedEmail = base64_encode($request->email);
+            $activationLink = url('/activate-account?email=' . $encodedEmail);
 
-            $activationLink = URL::temporarySignedRoute(
-                'activation.route',
-                now()->addMinutes(60),
-                ['user' => $user->id]
-            );
-            
-            $persona = Person::where('user_id', $user->id)->first();
-            
-            Mail::to($user->email)->send(new AccountActivationMail($persona, $activationLink));
-            
+            // Enviar correo con el enlace de activación y la contraseña generada
+            Mail::to($request->email)->send(new AccountActivationMail($request->name, $activationLink, $randomPassword));
 
-            return response()->json([
-                'message' => 'Usuario registrado correctamente. Revisa tu correo para activar tu cuenta.'
-            ], 201);
+            return response()->json(['message' => 'Trabajador registrado exitosamente'], 201);
+
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Error al registrar usuario', 'details' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al registrar trabajador', 'details' => $e->getMessage()], 500);
         }
     }
-
-public function registerWorker(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|min:8',
-        'name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
-        'birth_date' => 'required|date',
-        'phone' => 'nullable|string|max:20',
-        'RFID' => 'nullable|string|max:255',
-        'RFC' => 'nullable|string|max:255',
-        'NSS' => 'nullable|string|max:255'
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 422);
-    }
-
-    $hashedPassword = Hash::make($request->password);
-
-    try {
-        DB::statement("CALL RegisterWorker(?, ?, ?, ?, ?, ?, ?, ?, ?)", [
-            $request->email,
-            $hashedPassword,
-            $request->name,
-            $request->last_name,
-            $request->birth_date,
-            $request->phone,
-            $request->RFID,
-            $request->RFC,
-            $request->NSS
-        ]);
-
-        return response()->json(['message' => 'Trabajador registrado exitosamente'], 201);
-
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Error al registrar trabajador', 'details' => $e->getMessage()], 500);
-    }
-}
-
 }

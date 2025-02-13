@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AccountActivationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +28,6 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::get('/verify-reset-link', [AuthController::class, 'verifyResetLink']);
-
-
+Route::post('/activate-account', [AccountActivationController::class, 'activateAccount']);
 
 

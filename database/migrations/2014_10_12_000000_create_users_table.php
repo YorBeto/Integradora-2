@@ -23,14 +23,6 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
-
-        DB::table('users')->insert([
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('GATEE1234'), 
-            'email_verified_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
     }
 
     /**
