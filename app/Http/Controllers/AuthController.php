@@ -52,92 +52,46 @@ class AuthController extends Controller
         return response()->json(['message' => 'Sesión cerrada']);
     }
 
-    public function forgotPassword(Request $request)
-{
-    $request->validate(['email' => 'required|email']);
+    public function sendPasswordResetLink(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
 
-    $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-    if (!$user) {
-        return response()->json(['message' => 'No se encontró un usuario con ese correo.'], 404);
+        // Crear un enlace firmado para el restablecimiento de la contraseña
+        $resetLink = URL::temporarySignedRoute(
+            'reset-password.form',
+            now()->addMinutes(30),  // Caduca después de 30 minutos
+            ['email' => base64_encode($user->email)]  // El email codificado en base64
+        );
+
+        // Aquí rediriges al frontend. Cambia la URL por la de tu aplicación frontend
+        $frontendUrl = 'https://mi-aplicacion-frontend.com/reset-password?token=' . urlencode($resetLink);
+
+        // Enviar correo con la liga para cambiar la contraseña
+        Mail::to($user->email)->send(new PasswordResetMail($frontendUrl));
+
+        return response()->json(['message' => 'Se ha enviado el enlace para restablecer tu contraseña.'], 200);
     }
 
-    // Generar token único
-    $token = Str::random(60);
 
-    DB::table('password_resets')->updateOrInsert(
-        ['email' => $request->email],
-        [
-            'email' => $request->email,
-            'token' => Hash::make($token),
-            'created_at' => Carbon::now()
-        ]
-    );
+    public function resetPassword(Reques $request){
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string|min:8|confirmed',
+            'confirmed_password' => 'required|string|confirmed',
+        ]);
 
-    
-    $resetLink = url("/verify-reset-link?token={$token}&email={$request->email}");
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-    \Mail::send('emails.reset-password', ['resetLink' => $resetLink], function ($message) use ($request) {
-    $message->to($request->email);
-    $message->subject('Recuperación de contraseña');
-    });
-
-
-    return response()->json(['message' => 'Se ha enviado un enlace de recuperación a tu correo.']);
-}
-
-public function resetPassword(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'token' => 'required',
-        'password' => 'required|min:6|confirmed',
-    ]);
-
-    $record = DB::table('password_resets')->where('email', $request->email)->first();
-
-    if (!$record || !Hash::check($request->token, $record->token)) {
-        return response()->json(['message' => 'Token inválido o expirado'], 400);
+        $user = Auth::user();
+        
+        $user->password = Hash::make($request->password);
+        $user->save();
     }
-
-    $user = User::where('email', $request->email)->first();
-
-    if (!$user) {
-        return response()->json(['message' => 'Usuario no encontrado'], 404);
-    }
-
-    // Actualizar la contraseña
-    $user->password = Hash::make($request->password);
-    $user->save();
-
-    // Eliminar el token usado
-    DB::table('password_resets')->where('email', $request->email)->delete();
-
-    return response()->json(['message' => 'Contraseña restablecida con éxito.']);
-}
-public function verifyResetLink(Request $request)
-{
-    // Validamos que los parámetros token y email estén presentes
-    $request->validate([
-        'token' => 'required|string',
-        'email' => 'required|email',
-    ]);
-
-    // Verificamos si el token es válido para el correo proporcionado
-    $record = DB::table('password_resets')->where('email', $request->email)->first();
-
-    if (!$record || !Hash::check($request->token, $record->token)) {
-        return response()->json(['message' => 'Token inválido o expirado'], 400);
-    }
-
-    // Si el token es válido, devolveremos un status 200 con el email y token
-    return response()->json([
-        'message' => 'Token verificado con éxito',
-        'email' => $request->email,
-        'token' => $request->token
-    ], 200);
-}
-
 
 
 

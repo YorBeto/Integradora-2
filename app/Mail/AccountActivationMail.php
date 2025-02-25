@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -15,7 +14,10 @@ class AccountActivationMail extends Mailable
     public $activationLink;
     public $password;
 
-    public function __construct($name, $activationLink, $password)
+    /**
+     * Create a new message instance.
+     */
+    public function __construct(string $name, string $activationLink, string $password)
     {
         $this->name = $name;
         $this->activationLink = $activationLink;

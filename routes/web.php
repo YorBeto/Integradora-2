@@ -21,3 +21,7 @@ Route::get('/', function () {
 Route::get('/activate-account/{user}', [AccountActivationController::class, 'activateAccount'])
     ->name('activation.route')
     ->middleware('signed');
+
+    Route::get('/reset-password/{email}', [AuthController::class, 'resetPassword'])
+    ->name('reset-password.form')
+    ->middleware('signed');

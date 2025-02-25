@@ -57,7 +57,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Hola {{ $name }}</h2>
+        <h2>Hola {{ $name}}</h2>
         <p>Gracias por registrarte en nuestra plataforma. Para activar tu cuenta, haz clic en el siguiente enlace:</p>
         <a href="{{ $activationLink }}">Activar Cuenta</a>
         <p>Aquí tienes tu contraseña temporal:</p>
