@@ -15,7 +15,7 @@ class AccountActivationController extends Controller
         $user->email_verified_at = now();
         $user->save();
 
-        return redirect()->to('https://jmrhmrrj-4200.usw3.devtunnels.ms/forget-password');
+        return response()->json(['message' => 'Cuenta activada']);
     }
     
 }
