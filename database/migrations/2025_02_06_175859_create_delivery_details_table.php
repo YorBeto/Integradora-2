@@ -11,13 +11,12 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up() 
     {
         Schema::create('delivery_details', function (Blueprint $table) {
-            $table->foreignId('delivery_id')->constrained('deliveries'); // ID de la entrega
-            $table->foreignId('product_id')->constrained('products'); // ID del producto
-            $table->integer('quantity'); // Cantidad del producto
-            $table->timestamps();
+            $table->foreignId('delivery_id')->constrained('deliveries')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->float('quantity_weight');
         });
     }
 
