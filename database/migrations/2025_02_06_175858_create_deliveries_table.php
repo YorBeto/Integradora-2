@@ -11,18 +11,17 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up() 
     {
         Schema::create('deliveries', function (Blueprint $table) {
-            $table->id(); // ID de la entrega
-            $table->foreignId('invoice_id')->constrained('invoices'); // ID de la factura relacionada
-            $table->dateTime('delivery_date')->default(DB::raw('CURRENT_TIMESTAMP')); // Fecha de entrega
-            $table->string('carrier', 100); // Transportista
-            $table->enum('status', ['Pending', 'In transit', 'Delivered'])->default('Pending'); // Estado de la entrega
-            $table->timestamps();
+            $table->id();
+            $table->foreignId('invoice_id')->constrained('invoices')->onDelete('cascade');
+            $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
+            $table->timestamp('delivery_date')->default(now());
+            $table->string('carrier', 100);
+            $table->enum('status', ['Pending', 'Delivered'])->default('Pending');
         });
     }
-
     /**
      * Reverse the migrations.
      *

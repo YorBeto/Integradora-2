@@ -11,15 +11,12 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up() 
     {
         Schema::create('invoices', function (Blueprint $table) {
-            $table->id(); // ID de la factura
-            $table->foreignId('store_id')->constrained('stores'); // ID de la tienda
-            $table->dateTime('invoice_date')->default(DB::raw('CURRENT_TIMESTAMP')); // Fecha de la factura
-            $table->decimal('total', 10, 2); // Total de la factura
-            $table->text('details')->nullable(); // Detalles de la factura
-            $table->timestamps();
+            $table->id();
+            $table->timestamp('invoice_date')->default(now());
+            $table->text('details')->nullable();
         });
     }
 

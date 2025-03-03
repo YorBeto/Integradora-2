@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100); 
             $table->text('description')->nullable();
-            $table->float('weight')->nullable();
-            $table->decimal('price', 10, 2);
             $table->timestamps();
         });
     }
