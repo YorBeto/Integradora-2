@@ -27,25 +27,6 @@
         p {
             color: #666;
         }
-        a {
-            display: inline-block;
-            background-color: #fff; /* Blanco */
-            color: #0056b3; /* Azul */
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            border: 2px solid #0056b3; /* Contorno azul */
-            margin-top: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            font-family: 'Arial Black', Arial, sans-serif; /* Fuente más estilizada */
-            text-align: center; /* Centrar texto */
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        a:hover {
-            background-color: #0056b3; /* Azul */
-            color: #fff; /* Blanco */
-        }
         .password-box {
             background-color: #f0f0f0;
             border: 1px solid #ccc;
@@ -58,12 +39,10 @@
 <body>
     <div class="container">
         <h2>Hola {{ $name }}</h2>
-        <p>Gracias por registrarte en nuestra plataforma. Para activar tu cuenta, haz clic en el siguiente enlace:</p>
-        <a href="{{ $activationLink }}">Activar Cuenta</a>
-        <p>Aquí tienes tu contraseña temporal:</p>
+        <p>Gracias por registrarte en nuestra plataforma. Aquí tienes tu contraseña temporal:</p>
         <p class="password-box"><strong>{{ $password }}</strong></p>
         <p>Por favor, cambia esta contraseña después de iniciar sesión.</p>
-        <p>Este enlace expirará en 60 minutos.</p>
+        <p>Esta contraseña es válida hasta que la cambies.</p>
     </div>
 </body>
 </html>
