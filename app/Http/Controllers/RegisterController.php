@@ -33,11 +33,13 @@ class RegisterController extends Controller
 
     $randomPassword = Str::random(10); 
     $hashedPassword = Hash::make($randomPassword);
+    $foto_perfil='https://equiposikra.s3.us-east-2.amazonaws.com/Profile-images/workerimage.jpeg';
 
     try {
-        DB::statement("CALL RegisterWorker(?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+        DB::statement("CALL RegisterWorker(?, ?, ?, ?, ?, ?, ?, ?, ?,?)", [
             $request->email,
             $hashedPassword,
+            $foto_perfil,
             $request->name,
             $request->last_name,
             $request->birth_date,
@@ -50,8 +52,7 @@ class RegisterController extends Controller
         // Obtener el usuario recién creado
         $user = User::where('email', $request->email)->firstOrFail();
 
-        // Obtener la persona vinculada
-        $person = $user->person; // Usamos la relación definida en User
+        $person = $user->person; 
 
         if (!$person) {
             return response()->json(['error' => 'No se encontró información de persona para este usuario.'], 500);
