@@ -15,7 +15,7 @@ class AccountActivationController extends Controller
         $user->email_verified_at = now();
         $user->save();
 
-        return response()->json(['message' => 'Cuenta activada']);
+        return redirect()->to('http://3.144.20.33/login');
     }
     
 }

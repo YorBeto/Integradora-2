@@ -77,7 +77,7 @@ class AuthController extends Controller
     }
 
 
-    public function resetPassword(Reques $request){
+    public function resetPassword(Request $request){
         $validator = Validator::make($request->all(), [
             'password' => 'required|string|min:8|confirmed',
             'confirmed_password' => 'required|string|confirmed',
