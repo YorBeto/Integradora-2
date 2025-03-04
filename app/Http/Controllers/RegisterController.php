@@ -33,13 +33,13 @@ class RegisterController extends Controller
 
     $randomPassword = Str::random(10); 
     $hashedPassword = Hash::make($randomPassword);
-    $foto_perfil='https://equiposikra.s3.us-east-2.amazonaws.com/Profile-images/workerimage.jpeg';
+    $profile_photo='https://equiposikra.s3.us-east-2.amazonaws.com/Profile-images/workerimage.jpeg';
 
     try {
         DB::statement("CALL RegisterWorker(?, ?, ?, ?, ?, ?, ?, ?, ?,?)", [
             $request->email,
             $hashedPassword,
-            $foto_perfil,
+            $profile_photo,
             $request->name,
             $request->last_name,
             $request->birth_date,
