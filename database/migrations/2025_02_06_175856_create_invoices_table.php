@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('details')->nullable();
             $table->string('URL');
             $table->enum('status', ['Pending', 'Asigned'])->default('Pending');
+            $table->timestamps();
         });
     }
 

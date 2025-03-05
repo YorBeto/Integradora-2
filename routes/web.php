@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountActivationController;
+use App\Http\Controllers\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +26,5 @@ Route::get('/activate-account/{user}', [AccountActivationController::class, 'act
     Route::get('/reset-password/{email}', [AuthController::class, 'resetPassword'])
     ->name('reset-password.form')
     ->middleware('signed');
+
+    Route::get('/generate-invoice', [InvoiceController::class, 'generateInvoice']);
