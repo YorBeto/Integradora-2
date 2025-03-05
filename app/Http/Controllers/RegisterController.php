@@ -64,7 +64,6 @@ class RegisterController extends Controller
                 ['user' => $user->id]
             );
 
-            // Enviar correo con nombre y contraseña generada
             Mail::to($user->email)->send(new AccountActivationMail($person->name, $activationLink, $randomPassword));
 
             return response()->json(['message' => 'Trabajador registrado exitosamente'], 201);

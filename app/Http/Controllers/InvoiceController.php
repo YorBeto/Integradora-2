@@ -46,4 +46,19 @@ class InvoiceController extends Controller
             'invoice' => $invoice
         ]);
     }
+
+    public function getInvoices(){
+
+        $invoices = Invoice::select('URL')
+        ->where('status', 'Pending')
+        ->get()
+        ->map(function($invoice){
+            return [
+                'URL' => $invoice->URL
+            ];
+        });
+
+        return response()->json($invoices);
+
+    }
 }

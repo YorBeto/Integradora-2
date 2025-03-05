@@ -6,6 +6,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccountActivationController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\WorkerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,3 +45,7 @@ Route::get('/password/success', function () {
 })->name('password.success');
 
 Route::get('/generate-invoice', [InvoiceController::class, 'generateInvoice']);
+Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
+
+Route::get('/workers', [WorkerController::class, 'index']);
+

@@ -26,4 +26,9 @@ class Person extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function worker()
+    {
+        return $this->hasOne(Worker::class, 'person_id');
+    }
 }
