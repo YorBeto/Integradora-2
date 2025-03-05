@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->timestamp('invoice_date')->default(now());
             $table->text('details')->nullable();
+            $table->string('URL');
+            $table->enum('status', ['Pending', 'Asigned'])->default('Pending');
         });
     }
 

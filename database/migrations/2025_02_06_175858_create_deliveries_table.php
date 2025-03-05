@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
             $table->timestamp('delivery_date')->default(now());
             $table->string('carrier', 100);
-            $table->enum('status', ['Pending', 'Delivered'])->default('Pending');
+            $table->enum('status', ['Pending', 'In Progress', 'Completed'])->default('Pending');
         });
     }
     /**

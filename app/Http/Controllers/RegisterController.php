@@ -15,63 +15,62 @@ use Illuminate\Support\Facades\URL;
 class RegisterController extends Controller
 {
     public function registerWorker(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'email' => 'required|email|unique:users,email',
-        'name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
-        'birth_date' => 'required|date',
-        'phone' => 'nullable|string|max:20',
-        'RFID' => 'nullable|string|max:255',
-        'RFC' => 'nullable|string|max:255',
-        'NSS' => 'nullable|string|max:255'
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 422);
-    }
-
-    $randomPassword = Str::random(10); 
-    $hashedPassword = Hash::make($randomPassword);
-    $profile_photo='https://equiposikra.s3.us-east-2.amazonaws.com/Profile-images/workerimage.jpeg';
-
-    try {
-        DB::statement("CALL RegisterWorker(?, ?, ?, ?, ?, ?, ?, ?, ?,?)", [
-            $request->email,
-            $hashedPassword,
-            $profile_photo,
-            $request->name,
-            $request->last_name,
-            $request->birth_date,
-            $request->phone,
-            $request->RFID,
-            $request->RFC,
-            $request->NSS
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email',
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'birth_date' => 'required|date',
+            'phone' => 'nullable|string|max:20',
+            'RFID' => 'nullable|string|max:255',
+            'RFC' => 'nullable|string|max:255',
+            'NSS' => 'nullable|string|max:255'
         ]);
 
-        // Obtener el usuario recién creado
-        $user = User::where('email', $request->email)->firstOrFail();
-
-        $person = $user->person; 
-
-        if (!$person) {
-            return response()->json(['error' => 'No se encontró información de persona para este usuario.'], 500);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $activationLink = URL::temporarySignedRoute(
-            'activation.route',
-            now()->addMinutes(30),
-            ['user' => $user->id]
-        );
+        $randomPassword = Str::random(10); 
+        $hashedPassword = Hash::make($randomPassword);
+        $profile_photo='https://equiposikra.s3.us-east-2.amazonaws.com/Profile-images/workerimage.jpeg';
 
-        // Enviar correo con nombre y contraseña generada
-        Mail::to($user->email)->send(new AccountActivationMail($person->name, $activationLink, $randomPassword));
+        try {
+            DB::statement("CALL RegisterWorker(?, ?, ?, ?, ?, ?, ?, ?, ?,?)", [
+                $request->email,
+                $hashedPassword,
+                $profile_photo,
+                $request->name,
+                $request->last_name,
+                $request->birth_date,
+                $request->phone,
+                $request->RFID,
+                $request->RFC,
+                $request->NSS
+            ]);
 
-        return response()->json(['message' => 'Trabajador registrado exitosamente'], 201);
+            // Obtener el usuario recién creado
+            $user = User::where('email', $request->email)->firstOrFail();
 
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Error al registrar trabajador', 'details' => $e->getMessage()], 500);
+            $person = $user->person; 
+
+            if (!$person) {
+                return response()->json(['error' => 'No se encontró información de persona para este usuario.'], 500);
+            }
+
+            $activationLink = URL::temporarySignedRoute(
+                'activation.route',
+                now()->addMinutes(30),
+                ['user' => $user->id]
+            );
+
+            // Enviar correo con nombre y contraseña generada
+            Mail::to($user->email)->send(new AccountActivationMail($person->name, $activationLink, $randomPassword));
+
+            return response()->json(['message' => 'Trabajador registrado exitosamente'], 201);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al registrar trabajador', 'details' => $e->getMessage()], 500);
+        }
     }
-}
-
 }
