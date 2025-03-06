@@ -47,22 +47,40 @@ class InvoiceController extends Controller
 
         return response()->json([
             'message' => 'Factura generada correctamente',
-            'invoice' => $invoice
+            'invoice' => $fileUrl
         ]);
     }
 
-    public function getInvoices(){
 
-        $invoices = Invoice::select('URL')
+    private function generateFakeData($count)
+    {
+        $faker = Faker::create();
+        $data = [];
+
+        foreach (range(1, $count) as $index) {
+            $data[] = [
+                'name' => $faker->word(),
+                'KG' => $faker->randomFloat(2, 1, 100)
+            ];
+        }
+        
+        return $data;
+    }
+
+    public function getInvoices()
+{
+    $invoices = Invoice::select('URL', 'details', 'status') 
         ->where('status', 'Pending')
         ->get()
-        ->map(function($invoice){
+        ->map(function($invoice) {
             return [
-                'URL' => $invoice->URL
+                'URL' => $invoice->URL,
+                'status' => $invoice->status,
+                'details' => json_decode($invoice->details)
             ];
         });
 
-        return response()->json($invoices);
+    return response()->json($invoices);
+}
 
-    }
 }
