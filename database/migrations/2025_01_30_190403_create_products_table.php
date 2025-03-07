@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->float('stock_weight')->default(0);
             $table->string('exit_code');
+            $table->string('image');
             $table->timestamps();
         });
     }
