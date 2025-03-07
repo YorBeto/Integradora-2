@@ -52,11 +52,19 @@ class AuthController extends Controller
 
     public function sendResetPasswordLink(Request $request)
     {
-        $user = auth('api')->user();
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.required' => 'El campo "Correo Electrónico" es obligatorio.',
+            'email.email' => 'El campo "Correo Electrónico" debe ser una dirección de correo válida.',
+            'email.exists' => 'El correo electrónico no está registrado en el sistema.',
+        ]);
 
-        if (!$user) {
-            return response()->json(['error' => 'Usuario no autenticado'], 401);
-        }        
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $user = User::where('email', $request->email)->first();
 
         $resetPasswordLink = URL::temporarySignedRoute(
             'password.reset.form',
