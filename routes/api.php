@@ -7,6 +7,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccountActivationController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\WorkerController;
+use App\Http\Controllers\ProductController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -49,4 +51,6 @@ Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
 
 Route::get('/workers', [WorkerController::class, 'index']);
 Route::get('/worker', [WorkerController::class, 'worker']);
+
+Route::get('/products', [ProductController::class, 'index']);
 
