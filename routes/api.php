@@ -48,4 +48,5 @@ Route::get('/generate-invoice', [InvoiceController::class, 'generateInvoice']);
 Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
 
 Route::get('/workers', [WorkerController::class, 'index']);
+Route::get('/worker', [WorkerController::class, 'worker']);
 

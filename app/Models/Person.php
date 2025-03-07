@@ -29,6 +29,6 @@ class Person extends Model
 
     public function worker()
     {
-        return $this->hasOne(Worker::class, 'person_id');
+        return $this->hasOne(Worker::class);
     }
 }
