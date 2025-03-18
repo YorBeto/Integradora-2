@@ -31,7 +31,7 @@ class WorkerController extends Controller
         return response()->json($workers);
     }
 
-    public function worker(Request $request)
+    public function show(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:users,id'

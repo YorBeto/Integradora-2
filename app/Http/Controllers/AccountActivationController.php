@@ -9,7 +9,7 @@ use App\Models\User;
 
 class AccountActivationController extends Controller
 {
-        public function activateAccount(Request $request, $user)
+    public function activateAccount(Request $request, $user)
     {
         $user = User::findOrFail($user);
         $user->email_verified_at = now();
@@ -17,5 +17,4 @@ class AccountActivationController extends Controller
 
         return redirect()->to('http://3.144.20.33/login');
     }
-    
 }

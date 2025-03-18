@@ -27,11 +27,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Registro
-Route::post('/register-worker', [RegisterController::class, 'registerWorker']);
+Route::post('/register', [RegisterController::class, 'registerWorker']);
 
 // Autenticación
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
+
+// Workers
+Route::get('/workers', [WorkerController::class, 'index']);
+Route::get('/worker', [WorkerController::class, 'worker']);
+
+// Products
+Route::get('/products', [ProductController::class, 'index']);
 
 // Restablecimiento de contraseña
 Route::middleware('auth:api')->post('/send-reset-password-link', [AuthController::class, 'sendResetPasswordLink']);
@@ -44,8 +51,5 @@ Route::post('/password/update', [AuthController::class, 'updatePassword'])->name
 Route::get('/generate-invoice', [InvoiceController::class, 'generateInvoice']);
 Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
 
-Route::get('/workers', [WorkerController::class, 'index']);
-Route::get('/worker', [WorkerController::class, 'worker']);
 
-Route::get('/products', [ProductController::class, 'index']);
 
