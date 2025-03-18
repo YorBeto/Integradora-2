@@ -129,12 +129,12 @@
             @foreach($items as $item)
             <tr>
                 <td>{{ $item['name'] }}</td>
-                <td>{{ $item['KG'] }} KG</td>
+                <td>{{ $item['grams'] }} G.</td>
             </tr>
             @endforeach
             <tr class="total-row">
                 <td class="total">Total Kilogramos</td>
-                <td class="total">{{ $total }} KG</td>
+                <td class="total">{{ $total }} KG.</td>
             </tr>
         </table>
 

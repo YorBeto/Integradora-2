@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Invoice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
 
 class InvoiceController extends Controller
@@ -23,7 +24,7 @@ class InvoiceController extends Controller
             'title' => 'Factura de compra',
             'date' => now(),
             'items' => $items,
-            'total' => array_sum(array_column($items, 'KG')) // Sumar los kilogramos
+            'total' => array_sum(array_column($items, 'grams')) // Sumar los gramos
         ];
 
         // Generar PDF
@@ -51,36 +52,45 @@ class InvoiceController extends Controller
         ]);
     }
 
-
     private function generateFakeData($count)
     {
-        $faker = Faker::create();
+        // Obtener todos los nombres de productos registrados en la base de datos
+        $productNames = DB::table('products')->pluck('name')->toArray();
+        
+        if (empty($productNames)) {
+            return response()->json(['error' => 'No hay productos registrados.'], 400);
+        }
+        
+        // Mezclar los nombres para obtener una selección aleatoria
+        shuffle($productNames);
+    
         $data = [];
-
         foreach (range(1, $count) as $index) {
+            // Usar los nombres disponibles, repitiéndolos si se necesitan más de los que existen
+            $name = $productNames[$index % count($productNames)];
             $data[] = [
-                'name' => $faker->word(),
-                'KG' => $faker->randomFloat(2, 1, 100)
+                'name' => $name,
+                'grams' => rand(1, 1000) // Generar un peso aleatorio entre 1 y 1000 gramos
             ];
         }
         
         return $data;
-    }
+    }        
 
     public function getInvoices()
-{
-    $invoices = Invoice::select('URL', 'details', 'status') 
-        ->where('status', 'Pending')
-        ->get()
-        ->map(function($invoice) {
-            return [
-                'URL' => $invoice->URL,
-                'status' => $invoice->status,
-                'details' => json_decode($invoice->details)
-            ];
-        });
+    {
+        $invoices = Invoice::select('URL', 'details', 'status') 
+            ->where('status', 'Pending')
+            ->get()
+            ->map(function($invoice) {
+                return [
+                    'URL' => $invoice->URL,
+                    'status' => $invoice->status,
+                    'details' => json_decode($invoice->details)
+                ];
+            });
 
-    return response()->json($invoices);
-}
+        return response()->json($invoices);
+    }
 
 }
