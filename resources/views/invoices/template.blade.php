@@ -121,20 +121,32 @@
             Gracias por su compra. A continuación, se detallan los productos adquiridos junto con su peso correspondiente.
         </div>
 
-        <table>
+                <table>
             <tr>
                 <th>Producto</th>
-                <th>Kilogramos</th>
+                <th>Peso</th>
             </tr>
             @foreach($items as $item)
             <tr>
                 <td>{{ $item['name'] }}</td>
-                <td>{{ $item['grams'] }} G.</td>
+                <td>
+                    @if ($item['grams'] >= 1000)
+                        {{ number_format($item['grams'] / 1000, 3) }} KG.
+                    @else
+                        {{ $item['grams'] }} G.
+                    @endif
+                </td>
             </tr>
             @endforeach
             <tr class="total-row">
-                <td class="total">Total Kilogramos</td>
-                <td class="total">{{ $total }} KG.</td>
+                <td class="total">Total</td>
+                <td class="total">
+                    @if ($total >= 1000)
+                        {{ number_format($total / 1000, 3) }} KG.
+                    @else
+                        {{ $total }} G.
+                    @endif
+                </td>
             </tr>
         </table>
 

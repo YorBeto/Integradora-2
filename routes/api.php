@@ -41,10 +41,6 @@ Route::get('/password/reset/{user}', [AuthController::class, 'showResetPasswordF
 
 Route::post('/password/update', [AuthController::class, 'updatePassword'])->name('password.update');
 
-Route::get('/password/success', function () {
-    return view('auth.password_success');
-})->name('password.success');
-
 Route::get('/generate-invoice', [InvoiceController::class, 'generateInvoice']);
 Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
 
