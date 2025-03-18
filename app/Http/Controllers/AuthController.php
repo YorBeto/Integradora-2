@@ -93,7 +93,10 @@ class AuthController extends Controller
     }
 
     public function updatePassword(Request $request)
+
     {
+
+        $usuario = Auth::user();
         // Validar todos los campos necesarios
         $validator = Validator::make($request->all(), [
             'current_password' => 'required',
