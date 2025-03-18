@@ -35,7 +35,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 
 // Workers
 Route::get('/workers', [WorkerController::class, 'index']);
-Route::get('/worker', [WorkerController::class, 'worker']);
+Route::get('/worker', [WorkerController::class, 'show']);
 
 // Products
 Route::get('/products', [ProductController::class, 'index']);
@@ -50,6 +50,3 @@ Route::post('/password/update', [AuthController::class, 'updatePassword'])->name
 
 Route::get('/generate-invoice', [InvoiceController::class, 'generateInvoice']);
 Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
-
-
-

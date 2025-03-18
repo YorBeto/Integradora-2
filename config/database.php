@@ -90,6 +90,11 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
         ],
+        'mongodb' => [
+        'driver' => 'mongodb',
+        'dsn' => env('DB_URI', 'mongodb+srv://beto:jesus1@cluster0.6atnf.mongodb.net/'),
+        'database' => 'myappdb',
+],
 
     ],
 
