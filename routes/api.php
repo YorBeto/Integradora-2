@@ -34,7 +34,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
 // Restablecimiento de contraseña
-Route::post('/send-reset-password-link', [AuthController::class, 'sendResetPasswordLink']);
+Route::middleware('auth:api')->post('/send-reset-password-link', [AuthController::class, 'sendResetPasswordLink']);
 Route::get('/password/reset/{user}', [AuthController::class, 'showResetPasswordForm'])
     ->name('password.reset.form')
     ->middleware('signed');
