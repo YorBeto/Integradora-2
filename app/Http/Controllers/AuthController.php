@@ -128,5 +128,7 @@ class AuthController extends Controller
     
         // Redirigir a la vista de éxito
         return redirect()->route('password.success');
-    }       
+    }   
+    
+    
 }
