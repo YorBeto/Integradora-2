@@ -26,27 +26,27 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Registro
-Route::post('/register', [RegisterController::class, 'registerWorker']);
-
 // Autenticación
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
 
-// Workers
-Route::get('/workers', [WorkerController::class, 'index']);
-Route::get('/worker', [WorkerController::class, 'show']);
+Route::middleware(['auth:api'])->group(function () {
+    // Auth
+    Route::post('/update-password', [AuthController::class, 'updatePassword']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-// Products
-Route::get('/products', [ProductController::class, 'index']);
+    // Registro
+    Route::post('/register', [RegisterController::class, 'registerWorker']);
 
-// Restablecimiento de contraseña
-Route::middleware('auth:api')->post('/send-reset-password-link', [AuthController::class, 'sendResetPasswordLink']);
-Route::get('/password/reset/{user}', [AuthController::class, 'showResetPasswordForm'])
-    ->name('password.reset.form')
-    ->middleware('signed');
+    // Workers
+    Route::get('/workers', [WorkerController::class, 'index']);
+    Route::get('/worker', [WorkerController::class, 'show']);
+    Route::put('/worker/{id}', [WorkerController::class, 'update']);
 
-Route::post('/password/update', [AuthController::class, 'updatePassword'])->name('password.update');
+    // Products
+    Route::get('/products', [ProductController::class, 'index']);
 
-Route::get('/generate-invoice', [InvoiceController::class, 'generateInvoice']);
-Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
+    // Facturas y ordenes
+    Route::get('/invoice', [InvoiceController::class, 'generateInvoice']);
+    Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
+});
+

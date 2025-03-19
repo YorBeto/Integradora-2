@@ -66,4 +66,42 @@ class WorkerController extends Controller
         return response()->json($worker);
     }
 
+    public function update(Request $request, $id)
+    {
+        // Validar los datos entrantes
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'RFID' => 'required|string|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        // Buscar el trabajador
+        $worker = Worker::find($id);
+
+        if (!$worker) {
+            return response()->json(['error' => 'Trabajador no encontrado.'], 404);
+        }
+
+        // Actualizar solo los campos permitidos
+        $person = Person::find($worker->person_id);
+        
+        if (!$person) {
+            return response()->json(['error' => 'Persona asociada no encontrada.'], 404);
+        }
+
+        $person->name = $request->input('name');
+        $person->last_name = $request->input('last_name');
+        $person->phone = $request->input('phone');
+        $person->save();
+
+        $worker->RFID = $request->input('RFID');
+        $worker->save();
+
+        return response()->json(['message' => 'Trabajador actualizado correctamente.'], 200);
+    }
 }
