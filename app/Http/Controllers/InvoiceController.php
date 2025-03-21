@@ -8,7 +8,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
+use App\Events\InvoiceGenerated;
 class InvoiceController extends Controller
 {
     public function generateInvoice()
@@ -39,17 +42,19 @@ class InvoiceController extends Controller
 
         $fileUrl = Storage::disk('s3')->url($filePath);
 
-        // Guardar en la BD
         $invoice = Invoice::create([
             'details' => json_encode($data),
             'URL' => $fileUrl,
             'status' => 'Pending'
         ]);
 
+        broadcast(new InvoiceGenerated($invoice));
+
         return response()->json([
             'message' => 'Factura generada correctamente',
             'invoice' => $fileUrl
         ]);
+
     }
 
     private function generateFakeData($count)
@@ -79,6 +84,13 @@ class InvoiceController extends Controller
 
     public function getInvoices()
     {
+        $user = auth()->user();
+        $role = auth()->payload()->get('role');  
+
+        if ($role !== 'admin') {
+            return response()->json(['error' => 'No tienes permiso para realizar esta acción.'], 403);
+        }
+
         $invoices = Invoice::select('URL', 'details', 'status') 
             ->where('status', 'Pending')
             ->get()
@@ -92,5 +104,7 @@ class InvoiceController extends Controller
 
         return response()->json($invoices);
     }
+
+
 
 }

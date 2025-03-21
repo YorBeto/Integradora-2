@@ -27,4 +27,4 @@ Route::get('/activate-account/{user}', [AccountActivationController::class, 'act
     ->name('reset-password.form')
     ->middleware('signed');
 
-    Route::get('/generate-invoice', [InvoiceController::class, 'generateInvoice']);
+    //Route::get('/invoices/stream', [InvoiceController::class, 'generateInvoice']);

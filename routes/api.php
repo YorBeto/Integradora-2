@@ -47,6 +47,6 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Facturas y ordenes
     Route::get('/invoice', [InvoiceController::class, 'generateInvoice']);
-    Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
+    Route::middleware('auth:api')->get('/invoices', [InvoiceController::class, 'getInvoices']);
 });
 
