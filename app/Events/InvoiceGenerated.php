@@ -18,7 +18,7 @@ class InvoiceGenerated implements ShouldBroadcastNow
 
     public function __construct($invoice)
     {
-        $this->invoice = $invoice;
+        $this->invoice = $invoice->only(['id', 'URL', 'status', 'details']); 
     }
 
     public function broadcastOn()
