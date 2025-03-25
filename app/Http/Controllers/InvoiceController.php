@@ -77,7 +77,7 @@ class InvoiceController extends Controller
         return $data;
     }        
 
-    public function getInvoices()
+    public function index()
     {
         $invoices = Invoice::select('URL', 'details', 'status') 
             ->where('status', 'Pending')
@@ -92,5 +92,4 @@ class InvoiceController extends Controller
 
         return response()->json($invoices);
     }
-
 }

@@ -31,21 +31,11 @@ class WorkerController extends Controller
         return response()->json($workers);
     }
 
-    public function show(Request $request)
+    public function show($id)
     {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required|exists:users,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => 'El ID de usuario es requerido y debe existir en la base de datos.'], 400);
-        }
-
-        $userId = $request->input('id');
-
         $worker = DB::table('workers')
             ->join('people', 'workers.person_id', '=', 'people.id')
-            ->where('people.user_id', $userId)
+            ->where('workers.id', $id)
             ->select(
                 'workers.id',
                 'people.name',
@@ -60,7 +50,7 @@ class WorkerController extends Controller
             ->first(); 
 
         if (!$worker) {
-            return response()->json(['error' => 'No se encontró información de trabajador para este usuario.'], 404);
+            return response()->json(['error' => 'No se encontró información de trabajador para este ID.'], 404);
         }
 
         return response()->json($worker);
