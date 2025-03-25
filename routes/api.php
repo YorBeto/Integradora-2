@@ -8,6 +8,7 @@ use App\Http\Controllers\AccountActivationController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\DeviceController;
 
 
 /*
@@ -31,22 +32,27 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:api'])->group(function () {
     // Auth
-    Route::post('/update-password', [AuthController::class, 'updatePassword']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout']); //
+    Route::post('/update-password', [AuthController::class, 'updatePassword']); // Ready
+});
 
     // Registro
     Route::post('/register', [RegisterController::class, 'registerWorker']);
 
     // Workers
     Route::get('/workers', [WorkerController::class, 'index']);
-    Route::get('/worker', [WorkerController::class, 'show']);
+    Route::get('/worker/{id}', [WorkerController::class, 'show']);
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
+
+    // Facturas y ordenes
+    Route::get('/invoices', [InvoiceController::class, 'index']);
+    Route::get('/invoice', [InvoiceController::class, 'generateInvoice']);
 
     // Products
     Route::get('/products', [ProductController::class, 'index']);
 
     // Facturas y ordenes
     Route::get('/invoice', [InvoiceController::class, 'generateInvoice']);
-    Route::middleware('auth:api')->get('/invoices', [InvoiceController::class, 'getInvoices']);
+    Route::get('/invoices', [InvoiceController::class, 'getInvoices']);
 });
 

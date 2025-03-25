@@ -76,7 +76,7 @@ class InvoiceController extends Controller
     } 
 
 
-    public function getInvoices()
+    public function index()
     {
         $user = auth()->user();
         $role = auth()->payload()->get('role');

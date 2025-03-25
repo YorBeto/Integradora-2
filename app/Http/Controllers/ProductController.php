@@ -24,8 +24,6 @@ class ProductController extends Controller
                 'areas.name as area'
             )
             ->get();
-    
         return response()->json($products);
     }
-    
 }
