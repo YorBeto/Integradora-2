@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('invoice_id')->constrained('invoices')->onDelete('cascade');
             $table->foreignId('worker_id')->constrained('workers')->onDelete('cascade');
-            $table->timestamp('delivery_date')->default(now());
+            $table->date('delivery_date');
             $table->string('carrier', 100);
             $table->enum('status', ['Pending', 'Completed'])->default('Pending');
             

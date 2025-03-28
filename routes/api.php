@@ -9,6 +9,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\DeliveryController;
 
 
 /*
@@ -56,3 +57,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/device', [DeviceController::class, 'store']);
     Route::get('/device/{id}', [DeviceController::class, 'show']);
     Route::put('/device/{id}', [DeviceController::class, 'update']);
+
+    // Deliveries
+    Route::get('/deliveries', [DeliveryController::class, 'index']);
