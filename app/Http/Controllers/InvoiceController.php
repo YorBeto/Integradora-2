@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Events\InvoiceGenerated;
 
+
 class InvoiceController extends Controller
 {
     public function generateInvoice()
@@ -86,10 +87,11 @@ class InvoiceController extends Controller
         }
 
         $invoices = Invoice::where('status', 'Pending')
-            ->get(['id', 'URL', 'details', 'status'])
+            ->get(['id','invoice_date' ,'URL', 'details', 'status'])
             ->map(function($invoice) {
                 return [
                     'URL' => $invoice->URL,
+                    $date = $invoice->invoice_date instanceof \Carbon\Carbon ? $invoice->invoice_date : \Carbon\Carbon::parse($invoice->invoice_date),
                     'status' => $invoice->status,
                     'details' => json_decode($invoice->details)
                 ];

@@ -45,8 +45,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
 
     // Facturas y ordenes
-    Route::get('/invoices', [InvoiceController::class, 'index']);
-    Route::get('/invoice', [InvoiceController::class, 'generateInvoice']);
+   // Route::get('/invoices', [InvoiceController::class, 'index']);
+  //  Route::get('/invoice', [InvoiceController::class, 'generateInvoice']);
 
     // Products
     Route::get('/products', [ProductController::class, 'index']);
