@@ -9,6 +9,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\DeliveryController;
 
 
 /*
@@ -51,7 +52,16 @@ Route::middleware(['auth:api'])->group(function () {
     // Products
     Route::get('/products', [ProductController::class, 'index']);
 
+<<<<<<<<< Temporary merge branch 1
     // Facturas y ordenes
     Route::get('/invoice', [InvoiceController::class, 'generateInvoice']);
-    Route::middleware('auth:api')->get('/invoices', [InvoiceController::class, 'index']);
+    Route::middleware('auth:api')->get('/invoices', [InvoiceController::class, 'getInvoices']);
+});
 
+=========
+    // Devices
+    Route::get('/devices', [DeviceController::class, 'index']);
+    Route::post('/device', [DeviceController::class, 'store']);
+    Route::get('/device/{id}', [DeviceController::class, 'show']);
+    Route::put('/device/{id}', [DeviceController::class, 'update']);
+>>>>>>>>> Temporary merge branch 2
