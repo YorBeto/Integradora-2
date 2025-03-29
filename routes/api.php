@@ -60,4 +60,4 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Deliveries
     Route::get('/deliveries', [DeliveryController::class, 'index']);
-    Route::post('/deliveries', [DeliveryController::class, 'store']);
+    Route::post('/delivery', [DeliveryController::class, 'store']);
