@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountActivationController;
 use App\Http\Controllers\InvoiceController;
+use App\Models\Productssss;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,4 @@ Route::get('/activate-account/{user}', [AccountActivationController::class, 'act
     ->middleware('signed');
 
     //Route::get('/invoices/stream', [InvoiceController::class, 'generateInvoice']);
+

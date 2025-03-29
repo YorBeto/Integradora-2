@@ -92,8 +92,8 @@ return [
         ],
         'mongodb' => [
         'driver' => 'mongodb',
-        'dsn' => env('DB_URI', 'mongodb+srv://beto:jesus1@cluster0.6atnf.mongodb.net/'),
-        'database' => 'myappdb',
+        'dsn' => env('DB_URI', 'mongodb://admin:GATEE1234@3.141.40.45:27017/'),
+        'database' => 'Gatee',
 ],
 
     ],

@@ -53,28 +53,27 @@ class InvoiceController extends Controller
 
     private function generateFakeData($count)
     {
-        // Obtener todos los nombres de productos registrados en la base de datos
-        $productNames = DB::table('products')->pluck('name')->toArray();
-        
-        if (empty($productNames)) {
+        $products = DB::table('products')->select('id', 'name')->get()->toArray();
+
+        if (empty($products)) {
             return response()->json(['error' => 'No hay productos registrados.'], 400);
         }
-        
-        // Mezclar los nombres para obtener una selección aleatoria
-        shuffle($productNames);
-    
+
+        shuffle($products);
+
         $data = [];
         foreach (range(1, $count) as $index) {
-            // Usar los nombres disponibles, repitiéndolos si se necesitan más de los que existen
-            $name = $productNames[$index % count($productNames)];
+            $product = $products[$index % count($products)];
+
             $data[] = [
-                'name' => $name,
-                'grams' => rand(1, 1000) // Generar un peso aleatorio entre 1 y 1000 gramos
+                'id' => $product->id, 
+                'name' => $product->name,
+                'grams' => rand(1, 1000) 
             ];
         }
-        
+
         return $data;
-    } 
+    }
 
 
     public function index()

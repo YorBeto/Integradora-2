@@ -52,16 +52,16 @@ Route::middleware(['auth:api'])->group(function () {
     // Products
     Route::get('/products', [ProductController::class, 'index']);
 
-<<<<<<<<< Temporary merge branch 1
     // Facturas y ordenes
     Route::get('/invoice', [InvoiceController::class, 'generateInvoice']);
-    Route::middleware('auth:api')->get('/invoices', [InvoiceController::class, 'getInvoices']);
-});
+    Route::middleware('auth:api')->get('/invoices', [InvoiceController::class, 'index']);
 
-=========
     // Devices
     Route::get('/devices', [DeviceController::class, 'index']);
     Route::post('/device', [DeviceController::class, 'store']);
     Route::get('/device/{id}', [DeviceController::class, 'show']);
     Route::put('/device/{id}', [DeviceController::class, 'update']);
->>>>>>>>> Temporary merge branch 2
+
+    Route::post('/deliveries', [DeliveryController::class, 'store']);
+
+
