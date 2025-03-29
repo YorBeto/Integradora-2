@@ -31,7 +31,7 @@ class DeliveryController extends Controller
 
         $existingDelivery = DB::table('deliveries')
             ->where('invoice_id', $request->invoice_id)
-            ->where('status', 'Completed')
+            ->whereIn('status', ['Completed', 'Pending'])
             ->exists(); 
 
         if ($existingDelivery) {
