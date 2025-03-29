@@ -15,8 +15,10 @@ class WorkerController extends Controller
     {
         $workers = DB::table('workers')
             ->join('people', 'workers.person_id', '=', 'people.id')
+            ->join('users', 'people.user_id', '=', 'users.id')  
             ->select(
                 'workers.id',
+                'users.email',
                 'people.name',
                 'people.last_name',
                 'people.birth_date',
