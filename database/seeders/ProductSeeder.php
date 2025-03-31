@@ -16,30 +16,33 @@ class ProductSeeder extends Seeder
     {
         // Insertar ÁREAS
         DB::table('areas')->insert([
-            ['id' => 1, 'name' => 'Tipos de C. por Material'],
-            ['id' => 2, 'name' => 'Tamaño y Presentación'],
-            ['id' => 3, 'name' => 'Estado del Material'],
+            ['id' => 1, 'name' => 'Área A'],
+            ['id' => 2, 'name' => 'Área B'],
+            ['id' => 3, 'name' => 'Área C'],
+            ['id' => 4, 'name' => 'Área D'],
+            ['id' => 5, 'name' => 'Área E'],
+            ['id' => 6, 'name' => 'Área F'],
         ]);
 
-        // Insertar PRODUCTOS con exit_code numérico
+        // Insertar PRODUCTOS con los nombres originales de las áreas
         DB::table('products')->insert([
-            // Tipos de Carton por material
-            ['name' => 'C. Corrugado', 'area_id' => 1, 'description' => 'Para empaques resistentes', 'stock_weight' => 20100.5, 'exit_code' => 1001, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+Corrugado.png'],
-            ['name' => 'C. Compacto', 'area_id' => 1, 'description' => 'Para cajas más rígidas', 'stock_weight' => 29000.2, 'exit_code' => 1002, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+Compacto.png'],
-            ['name' => 'C. Reciclado', 'area_id' => 1, 'description' => 'Para procesos sostenibles', 'stock_weight' => 12200.0, 'exit_code' => 1003, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+reciclado.png'],
-            ['name' => 'C. Plastificado', 'area_id' => 1, 'description' => 'Resistente a la humedad', 'stock_weight' => 90900.0, 'exit_code' => 1004, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+plastificado.png'],
-            ['name' => 'C. Kraft', 'area_id' => 1, 'description' => 'Para empaques ecológicos', 'stock_weight' => 71005.5, 'exit_code' => 1005, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+kraft.png'],
+            // Área 1: C. Corrugado
+            ['name' => 'C. Corrugado', 'area_id' => 1, 'description' => 'Producto de Área A', 'stock_weight' => 10000.0, 'exit_code' => 1011, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+Corrugado.png'],
 
-            // Tamaño y presentación
-            ['name' => 'Hojas de C. Grandes', 'area_id' => 2, 'description' => 'Para corte y personalización', 'stock_weight' => 22200.0, 'exit_code' => 2001, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+en+Hojas.png'],
-            ['name' => 'Bobinas de C.', 'area_id' => 2, 'description' => 'Para fábricas que usan rollos', 'stock_weight' => 15000.3, 'exit_code' => 2002, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Bobinas+de+Carton.png'],
-            ['name' => 'C. en Placas', 'area_id' => 2, 'description' => 'Pre-cortado para diferentes usos', 'stock_weight' => 13000.0, 'exit_code' => 2003, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+en+placas.png'],
-            ['name' => 'C. en Paquetes', 'area_id' => 2, 'description' => 'Para venta en cantidades menores', 'stock_weight' => 50000.0, 'exit_code' => 2004, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+en+paquetes.png'],
+            // Área 2: C. Compacto
+            ['name' => 'C. Compacto', 'area_id' => 2, 'description' => 'Producto de Área B', 'stock_weight' => 8000.0, 'exit_code' => 1021, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+Compacto.png'],
 
-            // Estado del material
-            ['name' => 'C. Nuevo', 'area_id' => 3, 'description' => 'Recién adquirido', 'stock_weight' => 30000.0, 'exit_code' => 3001, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+nuevo.png'],
-            ['name' => 'C. en Procesamiento', 'area_id' => 3, 'description' => 'Corte y doblado', 'stock_weight' => 40080.0, 'exit_code' => 3002, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+en+procesamiento.png'],
-            ['name' => 'C. Reciclable', 'area_id' => 3, 'description' => 'Material dañado para reprocesar', 'stock_weight' => 100000.0, 'exit_code' => 3003, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+reciclable.png'],
+            // Área 3: C. Reciclado
+            ['name' => 'C. Reciclado', 'area_id' => 3, 'description' => 'Producto de Área C', 'stock_weight' => 9000.0, 'exit_code' => 1031, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+reciclado.png'],
+
+            // Área 4: C. Plastificado
+            ['name' => 'C. Plastificado', 'area_id' => 4, 'description' => 'Producto de Área D', 'stock_weight' => 7000.0, 'exit_code' => 1041, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+plastificado.png'],
+
+            // Área 5: C. Kraft
+            ['name' => 'C. Kraft', 'area_id' => 5, 'description' => 'Producto de Área E', 'stock_weight' => 11000.0, 'exit_code' => 1051, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+kraft.png'],
+
+            // Área 6: C. en Procesamiento
+            ['name' => 'C. en Procesamiento', 'area_id' => 6, 'description' => 'Producto de Área F', 'stock_weight' => 10000.0, 'exit_code' => 1061, 'image' => 'https://equiposikra.s3.us-east-2.amazonaws.com/productos/Carton+reciclable.png'],
         ]);
     }
 }
