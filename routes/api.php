@@ -45,6 +45,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/worker/{id}', [WorkerController::class, 'show']);
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
     Route::put('/user/{id}/desactivate', [AuthController::class, 'deactivateAccount']);
+    Route::put('/user/{id}/activate', [AuthController::class, 'activateAccount']);
 
     // Facturas y ordenes
     Route::get('/invoices', [InvoiceController::class, 'index']);
@@ -54,7 +55,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
 
     // Devices
-    Route::get('/devices', [DeviceController::class, 'index']);
+    Route::get('/divice', [DeviceController::class, 'index']);
     Route::post('/device', [DeviceController::class, 'store']);
     Route::get('/device/{id}', [DeviceController::class, 'show']);
     Route::put('/device/{id}', [DeviceController::class, 'update']);

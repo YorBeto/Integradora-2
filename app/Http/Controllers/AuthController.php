@@ -23,13 +23,13 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
     
         $user = User::where('email', $credentials['email'])->first();
-        
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
-            return response()->json(['error' => 'Credenciales inválidas'], 401);
-        }
 
         if (!$user->activate) {
             return response()->json(['error' => 'Cuenta desactivada'], 403);
+        }
+    
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
     
         $role = $user->roles()->first();  
@@ -105,10 +105,36 @@ class AuthController extends Controller
             return response()->json(['error' => 'Usuario no encontrado.'], 404);
         }
 
+        // Verificar si la cuenta ya está desactivada
+        if (!$user->activate) {
+            return response()->json(['message' => 'La cuenta ya está desactivada.'], 400);
+        }
+
         // Desactivar la cuenta
         $user->activate = false;
         $user->save();
 
         return response()->json(['message' => 'Cuenta desactivada correctamente.'], 200);
+    }
+
+    public function activateAccount($id)
+    {
+        // Buscar el usuario por su ID
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado.'], 404);
+        }
+
+        // Verificar si la cuenta ya está activada
+        if ($user->activate) {
+            return response()->json(['message' => 'La cuenta ya está activada.'], 400);
+        }
+
+        // Activar la cuenta
+        $user->activate = true;
+        $user->save();
+
+        return response()->json(['message' => 'Cuenta activada correctamente.'], 200);
     }
 }

@@ -77,9 +77,6 @@ class InvoiceController extends Controller
         return $data;
     }
 
-
-
-
     public function index()
     {
         $user = auth()->user();
