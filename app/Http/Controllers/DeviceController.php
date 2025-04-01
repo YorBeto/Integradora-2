@@ -16,6 +16,7 @@ class DeviceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'name' => 'required',
             'password' => 'required',
             'reading_time' => 'required',
             'response_time' => 'required',
@@ -34,6 +35,7 @@ class DeviceController extends Controller
     public function update(Request $request, Device $device)
     {
         $request->validate([
+            'name' => 'required',
             'password' => 'required',
             'reading_time' => 'required',
             'response_time' => 'required',

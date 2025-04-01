@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->string('password');
+            $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
             $table->timestamp('reading_time')->nullable();
             $table->timestamp('response_time')->nullable();
         });

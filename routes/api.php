@@ -44,6 +44,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/workers', [WorkerController::class, 'index']);
     Route::get('/worker/{id}', [WorkerController::class, 'show']);
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
+    Route::put('/user/{id}/desactivate', [AuthController::class, 'deactivateAccount']);
 
     // Facturas y ordenes
     Route::get('/invoices', [InvoiceController::class, 'index']);

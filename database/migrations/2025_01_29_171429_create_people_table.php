@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('last_name');
             $table->date('birth_date');
-            $table->string('phone')->nullable();
+            $table->string('phone')->unique();
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });    

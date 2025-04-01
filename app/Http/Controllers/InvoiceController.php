@@ -70,7 +70,7 @@ class InvoiceController extends Controller
             $data[] = [
                 'id' => $product->id,
                 'name' => $product->name,
-                'grams' => rand(1, 1000) 
+                'grams' => rand(1, 5000) 
             ];
         }
 
