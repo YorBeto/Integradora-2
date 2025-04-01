@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('delivery_date');
             $table->string('carrier', 100);
             $table->enum('status', ['Pending', 'Completed'])->default('Pending');
-            
+            $table->timestamps();
         });
     }
     /**

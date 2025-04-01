@@ -16,5 +16,6 @@ class Invoice extends Model
         'details',
         'URL',
         'status',
+        'assigned_to',
     ];
 }

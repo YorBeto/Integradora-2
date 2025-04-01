@@ -22,4 +22,9 @@ class Worker extends Model
     {
         return $this->belongsTo(Person::class);
     }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, 'assigned_to'); 
+    }
 }

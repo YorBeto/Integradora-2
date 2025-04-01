@@ -42,6 +42,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Workers
     Route::get('/workers', [WorkerController::class, 'index']);
+    Route::get('/workers/invoices', [WorkerController::class, 'getAvailableWorkers']);
     Route::get('/worker/{id}', [WorkerController::class, 'show']);
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
     Route::put('/user/{id}/desactivate', [AuthController::class, 'deactivateAccount']);
@@ -62,4 +63,9 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Deliveries
     Route::get('/deliveries', [DeliveryController::class, 'index']);
-    Route::post('/delivery', [DeliveryController::class, 'store']);
+
+
+    Route::post('invoices/{invoiceId}/assign', [InvoiceController::class, 'assignInvoice']);
+
+    Route::middleware('auth:api')->post('deliveries/{deliveryId}/complete', [DeliveryController::class, 'completeDelivery']);
+

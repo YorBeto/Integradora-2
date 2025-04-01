@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Worker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Invoice;
+use App\Models\Delivery;
+use Illuminate\Support\Facades\Auth;
+
 
 class DeliveryController extends Controller
 {
@@ -17,52 +21,30 @@ class DeliveryController extends Controller
         return response()->json(['data' => $deliveries], 200, [], JSON_PRETTY_PRINT);
     }
 
-        public function store(Request $request)
+
+    public function completeDelivery($deliveryId)
     {
-        $validator = Validator::make($request->all(), [
-            'invoice_id' => 'required|integer|exists:invoices,id',
-            'worker_id' => 'required|integer|exists:workers,id',
+        $delivery = Delivery::findOrFail($deliveryId);
+        
+        if ($delivery->worker_id !== auth()->id()) {
+            return response()->json(['error' => 'No tienes permiso para completar esta entrega.'], 403);
+        }
+
+        if ($delivery->status !== 'Pending') {
+            return response()->json(['error' => 'La entrega ya fue procesada o completada.'], 400);
+        }
+
+        $delivery->update([
+            'status' => 'Completed',
+            'delivery_date' => now()
         ]);
 
+        $invoice = Invoice::findOrFail($delivery->invoice_id);
+        $invoice->update(['status' => 'Completed']);
 
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $existingDelivery = DB::table('deliveries')
-            ->where('invoice_id', $request->invoice_id)
-            ->whereIn('status', ['Completed', 'Pending'])
-            ->exists(); 
-
-        if ($existingDelivery) {
-            return response()->json(['error' => 'Esta factura ya ha sido entregada completamente.'], 400);
-        }
-
-        $invoice = DB::table('invoices')
-        ->where('id', $request->invoice_id)
-        ->first();
-
-        $details = json_decode($invoice->details, true);
-        $carrier = $details['carrier'] ?? null; 
-
-
-        try {
-            DB::statement("CALL CreateDeliveryFromInvoice(?, ?, ?)", [
-                $request->invoice_id,
-                $request->worker_id,
-                $carrier
-            ]);
-
-            return response()->json([
-                'message' => 'Entrega creada con éxito'
-            ], 201);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Ocurrió un error al crear la entrega',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json(['message' => 'Entrega completada correctamente.']);
     }
+
+
+
 }

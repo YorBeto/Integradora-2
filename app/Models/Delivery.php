@@ -1,32 +1,31 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Models;
 
-return new class extends Migration
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Delivery extends Model
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up() 
+    use HasFactory;
+    protected $table = 'deliveries';
+    protected $fillable = [
+        'id',
+        'invoice_id',
+        'worker_id',
+        'delivery_date',
+        'carrier',
+        'status',
+    ];
+    protected $casts = [
+        'delivery_date' => 'date',
+    ];
+    public function invoice()
     {
-        Schema::create('delivery_details', function (Blueprint $table) {
-            $table->foreignId('delivery_id')->constrained('deliveries')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->float('quantity_weight');
-        });
+        return $this->belongsTo(Invoice::class);
     }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function worker()
     {
-        Schema::dropIfExists('delivery_details');
+        return $this->belongsTo(Worker::class);
     }
-};
+}

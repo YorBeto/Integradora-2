@@ -7,6 +7,7 @@ use App\Models\Worker;
 use App\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Invoice;
 
 
 class WorkerController extends Controller
@@ -96,4 +97,14 @@ class WorkerController extends Controller
 
         return response()->json(['message' => 'Trabajador actualizado correctamente.'], 200);
     }
+
+        public function getAvailableWorkers()
+        {
+            $maxOrders = 4;
+            $workers = Worker::withCount(['invoices' => function ($query) {
+                $query->where('status', 'Assigned');
+            }])->having('invoices_count', '<', $maxOrders)->get();
+
+            return response()->json($workers);
+        }
 }

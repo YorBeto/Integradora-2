@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Events\InvoiceGenerated;
+use App\Models\Delivery;
+use App\Models\Worker;
+use Illuminate\Support\Facades\Validator;
 
 
 class InvoiceController extends Controller
@@ -109,6 +112,60 @@ class InvoiceController extends Controller
         $randomNumber = rand(1000, 9999);
 
         return "{$randomCarrier}-{$randomNumber}";
+    }
+    
+        public function assignInvoice(Request $request, $invoiceId)
+    {
+        $validator = Validator::make($request->all(), [
+            'worker_id' => 'required|integer|exists:workers,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        
+        $workerId = $request->worker_id; 
+
+        $worker = Worker::find($workerId); 
+
+        if (!$worker) {
+            return response()->json([
+                'error' => 'Trabajador no encontrado.'
+            ], 404);
+        }
+
+        $invoice = Invoice::find($invoiceId);
+
+        if (!$invoice) {
+            return response()->json([
+                'error' => 'Factura no encontrada.'
+            ], 404);
+        }
+
+        if ($invoice->status !== 'Pending') {
+            return response()->json([
+                'error' => 'La factura ya fue asignada o completada'
+            ], 400);
+        }
+
+        // Asegúrate de asignar solo el ID del trabajador
+        $invoice->update([
+            'status' => 'Assigned',
+            'assigned_to' => $worker->id
+        ]);
+
+        // Crear la entrega con el workerId correcto
+        Delivery::create([
+            'invoice_id' => $invoiceId,
+            'worker_id' => $worker->id,
+            'delivery_date' => now(),
+            'carrier' => json_decode($invoice->details)->carrier,
+            'status' => 'Pending'
+        ]);
+
+        return response()->json([
+            'message' => 'Factura asignada correctamente'
+        ]);
     }
 
 }

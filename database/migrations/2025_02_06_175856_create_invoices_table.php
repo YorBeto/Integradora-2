@@ -18,7 +18,8 @@ return new class extends Migration
             $table->timestamp('invoice_date')->default(now());
             $table->text('details')->nullable();
             $table->string('URL');
-            $table->enum('status', ['Pending', 'Assigned'])->default('Pending');
+            $table->enum('status', ['Pending', 'Assigned','Completed'])->default('Pending');
+            $table->foreignId('assigned_to')->nullable()->constrained('workers')->onDelete('set null');
             $table->timestamps();
         });
     }
