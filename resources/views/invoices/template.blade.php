@@ -113,7 +113,8 @@
             </div>
             <div class="client-info">
                 <strong>Cliente:</strong> {{ ['Juan Pérez', 'María Gómez', 'Carlos López', 'Ana Torres', 'Pedro Sánchez'][rand(0,4)] }}<br>
-                <strong>Fecha:</strong> {{ date('d/m/Y') }}
+                <strong>Fecha:</strong> {{ date('d/m/Y') }}<br>
+                <strong>Transportista:</strong> {{ $carrier }} 
             </div>
         </div>
 

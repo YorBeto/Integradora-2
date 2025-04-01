@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountActivationController;
 use App\Http\Controllers\InvoiceController;
-use App\Models\Productssss;
+use App\Models\Productsss;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +30,16 @@ Route::get('/activate-account/{user}', [AccountActivationController::class, 'act
 
     //Route::get('/invoices/stream', [InvoiceController::class, 'generateInvoice']);
 
+    Route::get('/test-mongo', function () {
+        // Insertar un documento
+        $product = Productsss::create([
+            'name' => 'Laptop',
+            'price' => 999.99,
+            'description' => 'Una laptop de última generación',
+        ]);
+    
+        return response()->json([
+            'message' => 'Producto insertado en MongoDB',
+            'data' => $product,
+        ]);
+    });

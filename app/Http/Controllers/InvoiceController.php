@@ -13,16 +13,18 @@ use App\Events\InvoiceGenerated;
 
 class InvoiceController extends Controller
 {
-    public function generateInvoice()
+        public function generateInvoice()
     {
         $randomProductCount = rand(3, 10);
-        $items = $this->generateFakeData($randomProductCount);
+        $carrier = $this->selectCarriers(); 
+        $items = $this->generateFakeData($randomProductCount); 
 
         $data = [
             'title' => 'Factura de compra',
             'date' => now(),
             'items' => $items,
-            'total' => array_sum(array_column($items, 'grams'))
+            'total' => array_sum(array_column($items, 'grams')),
+            'carrier' => $carrier 
         ];
 
         $pdf = Pdf::loadView('invoices.template', $data);
@@ -35,10 +37,9 @@ class InvoiceController extends Controller
         $invoice = Invoice::create([
             'details' => json_encode($data),
             'URL' => $fileUrl,
-            'status' => 'Pending'
+            'status' => 'Pending',
         ]);
 
-        // Verificar si el WebSocket se dispara correctamente
         broadcast(new InvoiceGenerated($invoice));
 
         return response()->json([
@@ -51,7 +52,8 @@ class InvoiceController extends Controller
         ]);
     }
 
-    private function generateFakeData($count)
+
+        private function generateFakeData($count)
     {
         $products = DB::table('products')->select('id', 'name')->get()->toArray();
 
@@ -66,7 +68,7 @@ class InvoiceController extends Controller
             $product = $products[$index % count($products)];
 
             $data[] = [
-                'id' => $product->id, 
+                'id' => $product->id,
                 'name' => $product->name,
                 'grams' => rand(1, 1000) 
             ];
@@ -74,6 +76,8 @@ class InvoiceController extends Controller
 
         return $data;
     }
+
+
 
 
     public function index()
@@ -98,4 +102,16 @@ class InvoiceController extends Controller
 
         return response()->json($invoices);
     }
+
+    private function selectCarriers()
+    {
+        $carriers = ['DHL', 'UPS', 'Estafeta', 'FedEx', 'Castores', 'En-trega', 'Redpack', 'Paquetexpress'];
+        
+        $randomCarrier = $carriers[array_rand($carriers)];
+
+        $randomNumber = rand(1000, 9999);
+
+        return "{$randomCarrier}-{$randomNumber}";
+    }
+
 }

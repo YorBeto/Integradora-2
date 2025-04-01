@@ -22,8 +22,9 @@ class DeliveryController extends Controller
         $validator = Validator::make($request->all(), [
             'invoice_id' => 'required|integer|exists:invoices,id',
             'worker_id' => 'required|integer|exists:workers,id',
-            'carrier' => 'required|string|max:255'
         ]);
+
+
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -38,11 +39,19 @@ class DeliveryController extends Controller
             return response()->json(['error' => 'Esta factura ya ha sido entregada completamente.'], 400);
         }
 
+        $invoice = DB::table('invoices')
+        ->where('id', $request->invoice_id)
+        ->first();
+
+        $details = json_decode($invoice->details, true);
+        $carrier = $details['carrier'] ?? null; 
+
+
         try {
             DB::statement("CALL CreateDeliveryFromInvoice(?, ?, ?)", [
                 $request->invoice_id,
                 $request->worker_id,
-                $request->carrier
+                $carrier
             ]);
 
             return response()->json([
@@ -56,4 +65,6 @@ class DeliveryController extends Controller
             ], 500);
         }
     }
+
+
 }
