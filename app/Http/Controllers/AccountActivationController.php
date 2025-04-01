@@ -13,6 +13,7 @@ class AccountActivationController extends Controller
     {
         $user = User::findOrFail($user);
         $user->email_verified_at = now();
+        $user->activate = true;
         $user->save();
 
         return redirect()->to('http://3.144.20.33/login');

@@ -15,7 +15,7 @@ class InvoiceController extends Controller
 {
     public function generateInvoice()
     {
-        $randomProductCount = rand(3, 10);
+        $randomProductCount = rand(1, 6);
         $items = $this->generateFakeData($randomProductCount);
 
         $data = [
@@ -68,7 +68,7 @@ class InvoiceController extends Controller
             $data[] = [
                 'id' => $product->id, 
                 'name' => $product->name,
-                'grams' => rand(1, 1000) 
+                'grams' => rand(1, 5000) 
             ];
         }
 

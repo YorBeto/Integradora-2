@@ -27,6 +27,10 @@ class AuthController extends Controller
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
+
+        if (!$user->activate) {
+            return response()->json(['error' => 'Cuenta desactivada'], 403);
+        }
     
         $role = $user->roles()->first();  
     
@@ -90,5 +94,21 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Contraseña actualizada correctamente.'
         ], 200);
+    }
+
+    public function deactivateAccount($id)
+    {
+        // Buscar el usuario por su ID
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado.'], 404);
+        }
+
+        // Desactivar la cuenta
+        $user->activate = false;
+        $user->save();
+
+        return response()->json(['message' => 'Cuenta desactivada correctamente.'], 200);
     }
 }
