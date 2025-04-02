@@ -23,11 +23,11 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
     
         $user = User::where('email', $credentials['email'])->first();
-
+    
         if (!$user->activate) {
             return response()->json(['error' => 'Cuenta desactivada'], 403);
         }
-    
+
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }

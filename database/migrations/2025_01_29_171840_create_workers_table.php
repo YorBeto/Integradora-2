@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('NSS')->unique();
             $table->foreignId('person_id')->constrained('people');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
