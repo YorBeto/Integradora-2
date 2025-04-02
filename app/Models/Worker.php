@@ -25,6 +25,6 @@ class Worker extends Model
 
     public function invoices()
     {
-        return $this->hasMany(Invoice::class, 'assigned_to'); 
+        return $this->hasMany(Invoice::class, 'assigned_to','worker_id'); 
     }
 }

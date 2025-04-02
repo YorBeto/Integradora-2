@@ -107,4 +107,20 @@ class WorkerController extends Controller
 
             return response()->json($workers);
         }
+
+        public function getAssignedInvoices($workerId)
+        {
+            $worker = Worker::find($workerId);
+
+            if (!$worker) {
+                return response()->json(['error' => 'Trabajador no encontrado.'], 404);
+            }
+
+            $invoices = Invoice::where('assigned_to', $workerId)
+                ->where('status', 'Assigned') 
+                ->get();
+
+            return response()->json($invoices);
+        }
+
 }
