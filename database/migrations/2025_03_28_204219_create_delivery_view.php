@@ -16,6 +16,7 @@ class CreateDeliveryView extends Migration
             CREATE VIEW delivery_view AS
             SELECT 
                 d.invoice_id,
+                d.worker_id,
                 d.delivery_date,
                 GROUP_CONCAT(pr.name SEPARATOR ', ') AS products,
                 p.name AS worker_name,
@@ -26,8 +27,7 @@ class CreateDeliveryView extends Migration
             JOIN people p ON w.person_id = p.id
             JOIN delivery_details dd ON d.id = dd.delivery_id
             JOIN products pr ON dd.product_id = pr.id
-            GROUP BY d.id, d.invoice_id, p.name, d.delivery_date, d.carrier, d.status;
-
+            GROUP BY d.id, d.invoice_id, d.worker_id, p.name, d.delivery_date, d.carrier, d.status;
         ");
     }
 
