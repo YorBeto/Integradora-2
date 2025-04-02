@@ -68,4 +68,5 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('invoices/{invoiceId}/assign', [InvoiceController::class, 'assignInvoice']);
 
     Route::middleware('auth:api')->post('deliveries/{deliveryId}/complete', [DeliveryController::class, 'completeDelivery']);
+    Route::get('workers/{workerId}/invoices', [WorkerController::class, 'getAssignedInvoices']);
 

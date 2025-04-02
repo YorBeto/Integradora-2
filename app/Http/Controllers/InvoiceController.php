@@ -114,58 +114,65 @@ class InvoiceController extends Controller
         return "{$randomCarrier}-{$randomNumber}";
     }
     
-        public function assignInvoice(Request $request, $invoiceId)
-    {
-        $validator = Validator::make($request->all(), [
-            'worker_id' => 'required|integer|exists:workers,id',
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        
-        $workerId = $request->worker_id; 
+            public function assignInvoice(Request $request, $invoiceId)
+        {
+            $validator = Validator::make($request->all(), [
+                'worker_id' => 'required|integer|exists:workers,id',
+            ]);
 
-        $worker = Worker::find($workerId); 
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+            
+            $workerId = $request->worker_id; 
+            $worker = Worker::find($workerId); 
 
-        if (!$worker) {
+            if (!$worker) {
+                return response()->json([
+                    'error' => 'Trabajador no encontrado.'
+                ], 404);
+            }
+
+            $invoice = Invoice::find($invoiceId);
+
+            if (!$invoice) {
+                return response()->json([
+                    'error' => 'Factura no encontrada.'
+                ], 404);
+            }
+
+            if ($invoice->status !== 'Pending') {
+                return response()->json([
+                    'error' => 'La factura ya fue asignada o completada'
+                ], 400);
+            }
+
+            $invoice->update([
+                'status' => 'Assigned',
+                'assigned_to' => $worker->id
+            ]);
+
+            $delivery = Delivery::create([
+                'invoice_id' => $invoiceId,
+                'worker_id' => $worker->id,
+                'delivery_date' => now(),
+                'carrier' => json_decode($invoice->details)->carrier,
+                'status' => 'Pending'
+            ]);
+
+            $invoiceDetails = json_decode($invoice->details);
+
+            foreach ($invoiceDetails->items as $item) {
+                DB::table('delivery_details')->insert([
+                    'delivery_id' => $delivery->id, 
+                    'product_id' => $item->id,
+                    'quantity_weight' => $item->grams
+                ]);
+            }
+
             return response()->json([
-                'error' => 'Trabajador no encontrado.'
-            ], 404);
+                'message' => 'Factura asignada correctamente y detalles de entrega guardados.'
+            ]);
         }
-
-        $invoice = Invoice::find($invoiceId);
-
-        if (!$invoice) {
-            return response()->json([
-                'error' => 'Factura no encontrada.'
-            ], 404);
-        }
-
-        if ($invoice->status !== 'Pending') {
-            return response()->json([
-                'error' => 'La factura ya fue asignada o completada'
-            ], 400);
-        }
-
-        // Asegúrate de asignar solo el ID del trabajador
-        $invoice->update([
-            'status' => 'Assigned',
-            'assigned_to' => $worker->id
-        ]);
-
-        // Crear la entrega con el workerId correcto
-        Delivery::create([
-            'invoice_id' => $invoiceId,
-            'worker_id' => $worker->id,
-            'delivery_date' => now(),
-            'carrier' => json_decode($invoice->details)->carrier,
-            'status' => 'Pending'
-        ]);
-
-        return response()->json([
-            'message' => 'Factura asignada correctamente'
-        ]);
-    }
-
 }
