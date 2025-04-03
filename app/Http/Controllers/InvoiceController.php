@@ -47,6 +47,7 @@ class InvoiceController extends Controller
         return response()->json([
             'message' => 'Factura generada correctamente',
             'invoice' => [
+                'id' => $invoice->id,
                 'URL' => $invoice->URL,
                 'status' => $invoice->status,
                 'details' => json_decode($invoice->details)

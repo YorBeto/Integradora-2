@@ -72,3 +72,6 @@ Route::get('/temperature', [SensorsController::class, 'lastTemperature']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+    // Light Sensor
+    Route::get('/light-sensor', [LightSensorController::class, 'getLastLightStatus']);
+    Route::get('/temperature-humidity-sensor', [TemperatureHumiditySensorController::class, 'getLastTemperatureHumidityStatus']);
