@@ -56,7 +56,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
 
     // Devices
-    Route::get('/divice', [DeviceController::class, 'index']);
+    Route::get('/device', [DeviceController::class, 'index']);
     Route::post('/device', [DeviceController::class, 'store']);
     Route::get('/device/{id}', [DeviceController::class, 'show']);
     Route::put('/device/{id}', [DeviceController::class, 'update']);

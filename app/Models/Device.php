@@ -10,7 +10,9 @@ class Device extends Model
     use HasFactory;
 
     protected $fillable = [
+        'name',
         'password',
+        'area_id',
         'reading_time',
         'response_time',
     ];

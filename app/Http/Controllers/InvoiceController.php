@@ -83,12 +83,7 @@ class InvoiceController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $role = auth()->payload()->get('role');
-
-        if ($role !== 'admin') {
-            return response()->json(['error' => 'No tienes permiso para realizar esta acción.'], 403);
-        }
-
+       
         $invoices = Invoice::where('status', 'Pending')
             ->get(['id','invoice_date' ,'URL', 'details', 'status'])
             ->map(function($invoice) {
