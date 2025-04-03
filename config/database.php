@@ -92,8 +92,8 @@ return [
         ],
         'mongodb' => [
         'driver' => 'mongodb',
-        'dsn' => env('DB_URI', 'mongodb://admin:GATEE1234@18.220.90.55:27017,3.17.188.187:27017/?replicaSet=rs0&readPreference=primaryPreferred'),
-        'database' => 'Gatee',
+        'dsn' => env('DB_URI', 'mongodb+srv://lexus:amnesia00@cluster0.rydnf.mongodb.net/'),
+        'database' => 'GateeDB',
 ],
 
     ],

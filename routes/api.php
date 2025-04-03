@@ -10,6 +10,7 @@ use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\SensorsController;
 
 
 /*
@@ -72,3 +73,5 @@ Route::middleware(['auth:api'])->group(function () {
     Route::middleware('auth:api')->post('deliveries/{deliveryId}/complete', [DeliveryController::class, 'completeDelivery']);
     Route::get('workers/{workerId}/invoices', [WorkerController::class, 'getAssignedInvoices']);
 
+    Route::get('/temperature', [SensorsController::class, 'lastTemperature']);
+    
