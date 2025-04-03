@@ -10,6 +10,8 @@ use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\LightSensorController;
+use App\Http\Controllers\TemperatureHumiditySensorController;
 
 
 /*
@@ -72,3 +74,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::middleware('auth:api')->post('deliveries/{deliveryId}/complete', [DeliveryController::class, 'completeDelivery']);
     Route::get('workers/{workerId}/invoices', [WorkerController::class, 'getAssignedInvoices']);
 
+    // Light Sensor
+    Route::get('/light-sensor', [LightSensorController::class, 'getLastLightStatus']);
+    Route::get('/temperature-humidity-sensor', [TemperatureHumiditySensorController::class, 'getLastTemperatureHumidityStatus']);
