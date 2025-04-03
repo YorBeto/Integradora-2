@@ -27,7 +27,8 @@ class WorkerController extends Controller
                 'people.phone',
                 'workers.RFID',
                 'workers.RFC',
-                'workers.NSS'
+                'workers.NSS',
+                'users.activate'
             )
             ->get();
 
@@ -48,7 +49,8 @@ class WorkerController extends Controller
                 'people.phone',
                 'workers.RFID',
                 'workers.RFC',
-                'workers.NSS'
+                'workers.NSS',
+                'users.activate',
             )
             ->first(); 
 
