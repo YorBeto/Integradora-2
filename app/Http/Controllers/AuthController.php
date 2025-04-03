@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Person;
+use App\Models\Worker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -15,6 +17,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
 use App\Mail\ResetPasswordMail;
 use Illuminate\Support\MessageBag;
+
 
 class AuthController extends Controller
 {
@@ -96,34 +99,66 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function deactivateAccount($id)
+    public function desactivateAccount(Request $request)
     {
-        // Buscar el usuario por su ID
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json(['error' => 'Usuario no encontrado.'], 404);
+        // Validar que se envíe el ID del trabajador
+        $request->validate([
+            'id' => 'required|integer|exists:workers,id',
+        ]);
+    
+        // Buscar el trabajador en la tabla 'workers' por su ID
+        $worker = Worker::find($request->id);
+    
+        // Verificar si el trabajador existe
+        if (!$worker) {
+            return response()->json(['message' => 'Trabajador no encontrado.'], 404);
         }
-
+    
+        // Buscar el usuario asociado a través del 'person_id' en 'workers' y 'user_id' en 'people'
+        $user = User::whereHas('person', function($query) use ($worker) {
+            $query->where('id', $worker->person_id);
+        })->first();
+    
+        // Verificar si el usuario existe
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado.'], 404);
+        }
+    
         // Verificar si la cuenta ya está desactivada
         if (!$user->activate) {
             return response()->json(['message' => 'La cuenta ya está desactivada.'], 400);
         }
-
+    
         // Desactivar la cuenta
         $user->activate = false;
         $user->save();
-
+    
         return response()->json(['message' => 'Cuenta desactivada correctamente.'], 200);
-    }
+    }    
 
-    public function activateAccount($id)
+    public function activateAccount(Request $request)
     {
-        // Buscar el usuario por su ID
-        $user = User::find($id);
+        // Validar que se envíe el ID del trabajador
+        $request->validate([
+            'id' => 'required|integer|exists:workers,id',
+        ]);
 
+        // Buscar el trabajador en la tabla 'workers' por su ID
+        $worker = Worker::find($request->id);
+
+        // Verificar si el trabajador existe
+        if (!$worker) {
+            return response()->json(['message' => 'Trabajador no encontrado.'], 404);
+        }
+
+        // Buscar el usuario asociado a través del 'person_id' en 'workers' y 'user_id' en 'people'
+        $user = User::whereHas('person', function($query) use ($worker) {
+            $query->where('id', $worker->person_id);
+        })->first();
+
+        // Verificar si el usuario existe
         if (!$user) {
-            return response()->json(['error' => 'Usuario no encontrado.'], 404);
+            return response()->json(['message' => 'Usuario no encontrado.'], 404);
         }
 
         // Verificar si la cuenta ya está activada

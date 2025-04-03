@@ -45,8 +45,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/workers/invoices', [WorkerController::class, 'getAvailableWorkers']);
     Route::get('/worker/{id}', [WorkerController::class, 'show']);
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
-    Route::post('/user/desactivate', [AuthController::class, 'deactivateAccount']);
-    Route::post('/user/activate', [AuthController::class, 'activateAccount']);
+
+    Route::put('/user/desactivate', [AuthController::class, 'desactivateAccount']);
+    Route::put('/user/activate', [AuthController::class, 'activateAccount']);
 
     // Facturas y ordenes
     Route::get('/invoices', [InvoiceController::class, 'index']);

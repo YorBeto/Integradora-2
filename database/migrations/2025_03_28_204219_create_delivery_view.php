@@ -18,10 +18,11 @@ class CreateDeliveryView extends Migration
                 d.invoice_id,
                 d.worker_id,
                 d.delivery_date,
-                GROUP_CONCAT(pr.name SEPARATOR ', ') AS products,
+                GROUP_CONCAT(CONCAT(pr.name, ': ', dd.quantity_weight, 'g') SEPARATOR ', ') AS products,
                 p.name AS worker_name,
                 d.carrier,
-                d.status
+                d.status,
+                SUM(dd.quantity_weight) AS total_weight
             FROM deliveries d
             JOIN workers w ON d.worker_id = w.id
             JOIN people p ON w.person_id = p.id
