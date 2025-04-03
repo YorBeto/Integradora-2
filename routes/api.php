@@ -12,7 +12,6 @@ use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\SensorsController;
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,54 +23,52 @@ use App\Http\Controllers\SensorsController;
 |
 */
 
-// Rutas protegidas con 'auth:sanctum'
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-// Autenticación
+// Public Routes
 Route::post('/login', [AuthController::class, 'login']);
 
+// Protected Routes
 Route::middleware(['auth:api'])->group(function () {
-    // Auth
-    Route::post('/logout', [AuthController::class, 'logout']); //
-    Route::post('/update-password', [AuthController::class, 'updatePassword']); // Ready
-});
 
-    // Registro
-    Route::post('/register', [RegisterController::class, 'registerWorker']);
-
-    // Workers
-    Route::get('/workers', [WorkerController::class, 'index']);
-    Route::get('/workers/invoices', [WorkerController::class, 'getAvailableWorkers']);
-    Route::get('/worker/{id}', [WorkerController::class, 'show']);
-    Route::put('/worker/{id}', [WorkerController::class, 'update']);
-
+    // Auth Routes
+    Route::post('/logout', [AuthController::class, 'logout']);
     Route::put('/user/desactivate', [AuthController::class, 'desactivateAccount']);
     Route::put('/user/activate', [AuthController::class, 'activateAccount']);
+    Route::put('/update-password', [AuthController::class, 'updatePassword']);
 
-    // Facturas y ordenes
+    // Registration Routes
+    Route::post('/register', [RegisterController::class, 'registerWorker']);
+
+    // Worker Routes
+    Route::get('/workers', [WorkerController::class, 'index']);
+    Route::get('/workers/invoices', [WorkerController::class, 'availableWorkers']);
+    Route::get('/worker/{id}', [WorkerController::class, 'show']);
+    Route::put('/worker/{id}', [WorkerController::class, 'update']);
+    Route::get('/workers/{id}/invoices', [WorkerController::class, 'assignedInvoices']);
+
+    // Invoice Routes
     Route::get('/invoices', [InvoiceController::class, 'index']);
     Route::get('/invoice', [InvoiceController::class, 'generateInvoice']);
+    Route::post('/invoices/{id}/assign', [InvoiceController::class, 'assignInvoice']);
 
-    // Products
+    // Product Routes
     Route::get('/products', [ProductController::class, 'index']);
 
-    // Devices
+    // Device Routes
     Route::get('/divice', [DeviceController::class, 'index']);
     Route::post('/device', [DeviceController::class, 'store']);
     Route::get('/device/{id}', [DeviceController::class, 'show']);
     Route::put('/device/{id}', [DeviceController::class, 'update']);
 
-    // Deliveries
+    // Delivery Routes
     Route::get('/deliveries', [DeliveryController::class, 'index']);
+    Route::get('/my-deliveries', [DeliveryController::class, 'show']);
+    Route::post('/deliveries/{id}/complete', [DeliveryController::class, 'completeDelivery']);
+});
 
-    Route::middleware('auth:api')->get('/my-deliveries', [DeliveryController::class, 'show']);
+// Sensor Routes
+Route::get('/temperature', [SensorsController::class, 'lastTemperature']);
 
-    Route::post('invoices/{invoiceId}/assign', [InvoiceController::class, 'assignInvoice']);
-
-    Route::middleware('auth:api')->post('deliveries/{deliveryId}/complete', [DeliveryController::class, 'completeDelivery']);
-    Route::get('workers/{workerId}/invoices', [WorkerController::class, 'getAssignedInvoices']);
-
-    Route::get('/temperature', [SensorsController::class, 'lastTemperature']);
-    
+// Sanctum Protected Route
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});

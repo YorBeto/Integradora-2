@@ -23,15 +23,38 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        // Validar los datos de entrada
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:8',
+        ], [
+            'email.required' => 'El campo "Correo Electrónico" es obligatorio.',
+            'email.email' => 'El campo "Correo Electrónico" debe ser una dirección de correo válida.',
+            'password.required' => 'El campo "Contraseña" es obligatorio.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
         $credentials = $request->only('email', 'password');
     
         $user = User::where('email', $credentials['email'])->first();
     
+        
         if (!$user->activate) {
             return response()->json(['error' => 'Cuenta desactivada'], 403);
         }
+    
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (!Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
     
@@ -60,10 +83,8 @@ class AuthController extends Controller
 
     public function updatePassword(Request $request)
     {
-        // Obtener el usuario autenticado desde el token
         $user = Auth::user();
     
-        // Validar los campos
         $validator = Validator::make($request->all(), [
             'current_password' => 'required',
             'password' => 'required|confirmed|min:8',

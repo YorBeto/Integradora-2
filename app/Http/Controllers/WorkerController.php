@@ -100,29 +100,28 @@ class WorkerController extends Controller
         return response()->json(['message' => 'Trabajador actualizado correctamente.'], 200);
     }
 
-        public function getAvailableWorkers()
-        {
-            $maxOrders = 4;
-            $workers = Worker::withCount(['invoices' => function ($query) {
-                $query->where('status', 'Assigned');
-            }])->having('invoices_count', '<', $maxOrders)->get();
+    public function availableWorkers()
+    {
+        $maxOrders = 4;
+        $workers = Worker::withCount(['invoices' => function ($query) {
+            $query->where('status', 'Assigned');
+        }])->having('invoices_count', '<', $maxOrders)->get();
 
-            return response()->json($workers);
+        return response()->json($workers);
+    }
+
+    public function assignedInvoices($id)
+    {
+        $worker = Worker::find($id);
+
+        if (!$worker) {
+            return response()->json(['error' => 'Trabajador no encontrado.'], 404);
         }
 
-        public function getAssignedInvoices($workerId)
-        {
-            $worker = Worker::find($workerId);
+        $invoices = Invoice::where('assigned_to', $id)
+            ->where('status', 'Assigned')
+            ->get();
 
-            if (!$worker) {
-                return response()->json(['error' => 'Trabajador no encontrado.'], 404);
-            }
-
-            $invoices = Invoice::where('assigned_to', $workerId)
-                ->where('status', 'Assigned') 
-                ->get();
-
-            return response()->json($invoices);
-        }
-
+        return response()->json($invoices);
+    }
 }
