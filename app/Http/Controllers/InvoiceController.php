@@ -48,6 +48,7 @@ class InvoiceController extends Controller
         return response()->json([
             'message' => 'Factura generada correctamente',
             'invoice' => [
+                'id' => $invoice->id,
                 'URL' => $invoice->URL,
                 'status' => $invoice->status,
                 'details' => json_decode($invoice->details)
@@ -83,11 +84,12 @@ class InvoiceController extends Controller
     public function index()
     {
         $user = auth()->user();
-       
+
         $invoices = Invoice::where('status', 'Pending')
             ->get(['id','invoice_date' ,'URL', 'details', 'status'])
             ->map(function($invoice) {
                 return [
+                    'id' => $invoice->id,
                     'URL' => $invoice->URL,
                     $date = $invoice->invoice_date instanceof \Carbon\Carbon ? $invoice->invoice_date : \Carbon\Carbon::parse($invoice->invoice_date),
                     'status' => $invoice->status,
