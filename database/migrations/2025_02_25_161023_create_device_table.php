@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
             $table->time('reading_time')->nullable();
             $table->time('response_time')->nullable();
+            $table->timestamps();
         });
     }
 

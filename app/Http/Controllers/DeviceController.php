@@ -15,14 +15,15 @@ class DeviceController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required',
             'password' => 'required',
+            'area_id' => 'required|integer',
             'reading_time' => 'required',
             'response_time' => 'required',
         ]);
 
-        $device = Device::create($request->all());
+        $device = Device::create($validatedData);
 
         return response()->json(['success' => 'Device created successfully.', 'device' => $device]);
     }
@@ -34,14 +35,15 @@ class DeviceController extends Controller
 
     public function update(Request $request, Device $device)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required',
             'password' => 'required',
+            'area_id' => 'required|integer',
             'reading_time' => 'required',
             'response_time' => 'required',
         ]);
 
-        $device->update($request->all());
+        $device->update($validatedData);
 
         return response()->json(['success' => 'Device updated successfully.', 'device' => $device]);
     }

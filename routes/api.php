@@ -54,8 +54,8 @@ Route::middleware(['auth:api'])->group(function () {
     // Product Routes
     Route::get('/products', [ProductController::class, 'index']);
 
-    // Device Routes
-    Route::get('/divice', [DeviceController::class, 'index']);
+    // Devices
+    Route::get('/device', [DeviceController::class, 'index']);
     Route::post('/device', [DeviceController::class, 'store']);
     Route::get('/device/{id}', [DeviceController::class, 'show']);
     Route::put('/device/{id}', [DeviceController::class, 'update']);
