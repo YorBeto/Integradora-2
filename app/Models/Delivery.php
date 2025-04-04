@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Delivery extends Model
 {
     use HasFactory;
+
     protected $table = 'deliveries';
+
     protected $fillable = [
         'id',
         'invoice_id',
@@ -17,13 +19,16 @@ class Delivery extends Model
         'carrier',
         'status',
     ];
+
     protected $casts = [
         'delivery_date' => 'date',
     ];
+
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
     }
+
     public function worker()
     {
         return $this->belongsTo(Worker::class);

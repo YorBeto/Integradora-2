@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -10,22 +11,22 @@ class ResetPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $name;
-    public $resetPasswordLink;
+    public $userName;
+    public $newPassword;
 
-    public function __construct($name, $resetPasswordLink)
+    public function __construct($userName, $newPassword)
     {
-        $this->name = $name;
-        $this->resetPasswordLink = $resetPasswordLink;
+        $this->userName = $userName;
+        $this->newPassword = $newPassword;
     }
 
     public function build()
     {
-        return $this->view('emails.reset_password')
-            ->subject('Restablece tu Contraseña')
-            ->with([
-                'name' => $this->name,
-                'resetPasswordLink' => $this->resetPasswordLink,
-            ]);
+        return $this->subject('Tu nueva contraseña')
+                    ->view('emails.reset-password')
+                    ->with([
+                        'name' => $this->userName,  // Pasamos el nombre aquí
+                        'newPassword' => $this->newPassword,
+                    ]);
     }
 }

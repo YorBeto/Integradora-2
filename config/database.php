@@ -94,6 +94,7 @@ return [
         'driver' => 'mongodb',
         'dsn' => env('DB_URI', 'mongodb://admin:GATEE1234@18.218.51.166:27017/'),
         'database' => 'Gatee',
+
 ],
 
     ],
