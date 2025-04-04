@@ -21,12 +21,13 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'birth_date' => 'required|date',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:20|unique:people,phone',
             'RFID' => 'nullable|string|max:255|unique:workers,RFID',
             'RFC' => 'nullable|string|max:255|unique:workers,RFC',
             'NSS' => 'nullable|string|max:255|unique:workers,NSS'
         ], [
             'email.unique' => 'El correo electrónico ya está registrado.',
+            'phone.unique' => 'El teléfono ya está registrado.',
             'RFID.unique' => 'El RFID ya está registrado.',
             'RFC.unique' => 'El RFC ya está registrado.',
             'NSS.unique' => 'El NSS ya está registrado.'
