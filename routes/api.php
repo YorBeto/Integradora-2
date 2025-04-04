@@ -12,6 +12,7 @@ use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\LightSensorController;
 use App\Http\Controllers\TemperatureHumiditySensorController;
+use App\Http\Controllers\PirController;
 
 
 /*
@@ -76,4 +77,9 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Light Sensor
     Route::get('/light-sensor', [LightSensorController::class, 'getLastLightStatus']);
+
+    // Temperature and Humidity Sensor
     Route::get('/temperature-humidity-sensor', [TemperatureHumiditySensorController::class, 'getLastTemperatureHumidityStatus']);
+
+    // PIR Sensor
+    Route::get('/pir-sensor', [PirController::class, 'getLastPirStatus']);
