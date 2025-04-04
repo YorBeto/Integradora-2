@@ -8,7 +8,7 @@ use App\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Invoice;
-
+use Illuminate\Validation\Rule;
 
 class WorkerController extends Controller
 {
@@ -70,6 +70,7 @@ class WorkerController extends Controller
             'name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u', // Permite letras y espacios
             'last_name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u',
             'phone' => 'required|string|max:20|regex:/^[0-9]+$/',
+            'birth_date' => 'required|date', 
             'RFID' => [
                 'required',
                 'string',
@@ -108,7 +109,8 @@ class WorkerController extends Controller
                 $person->update([
                     'name' => $request->name,
                     'last_name' => $request->last_name,
-                    'phone' => $request->phone
+                    'phone' => $request->phone,
+                    'birth_date' => $request->birth_date
                 ]);
 
                 $worker->update([
@@ -124,7 +126,6 @@ class WorkerController extends Controller
 
             return response()->json([
                 'message' => 'Trabajador actualizado correctamente',
-                'data' => $worker->load('person', 'person.user')
             ], 200);
 
         } catch (\Exception $e) {
