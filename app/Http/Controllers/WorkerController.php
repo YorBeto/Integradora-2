@@ -14,25 +14,10 @@ class WorkerController extends Controller
 {
     public function index()
     {
-        $workers = DB::table('workers')
-            ->join('people', 'workers.person_id', '=', 'people.id')
-            ->join('users', 'people.user_id', '=', 'users.id')  
-            ->select(
-                'workers.id',
-                'users.email',
-                'people.name',
-                'people.last_name',
-                'people.birth_date',
-                DB::raw('TIMESTAMPDIFF(YEAR, people.birth_date, CURDATE()) as age'),
-                'people.phone',
-                'workers.RFID',
-                'workers.RFC',
-                'workers.NSS',
-                'users.activate'
-            )
-            ->get();
+        // Consulta la vista que contiene los workers
+        $workers = DB::table('workers_view')->get();
 
-        return response()->json($workers);
+        return response()->json(['data' => $workers], 200, [], JSON_PRETTY_PRINT);
     }
 
     public function show($id) // como este pero nuevo
@@ -133,7 +118,7 @@ class WorkerController extends Controller
                 'details' => $e->getMessage()
             ], 500);
         }
-    }
+    }      
 
     public function availableWorkers()
     {

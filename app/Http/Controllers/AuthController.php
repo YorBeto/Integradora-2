@@ -163,6 +163,16 @@ class AuthController extends Controller
             return response()->json(['message' => 'Trabajador no encontrado.'], 404);
         }
     
+        // Verificar si el trabajador tiene entregas pendientes
+        $hasPendingDeliveries = DB::table('deliveries')
+            ->where('worker_id', $worker->id)
+            ->where('status', 'Pending')
+            ->exists();
+    
+        if ($hasPendingDeliveries) {
+            return response()->json(['message' => 'No se puede desactivar la cuenta porque tiene entregas pendientes.'], 400);
+        }
+    
         // Buscar el usuario asociado a través del 'person_id' en 'workers' y 'user_id' en 'people'
         $user = User::whereHas('person', function($query) use ($worker) {
             $query->where('id', $worker->person_id);

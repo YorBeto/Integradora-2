@@ -25,7 +25,7 @@ use App\Http\Controllers\SensorsController;
 
 // Public Routes
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/password/reset', [AuthController::class, 'resetPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 // Protected Routes
 Route::middleware(['auth:api'])->group(function () {

@@ -19,8 +19,6 @@
             min-height: 100vh;
             width: 100vw;
             display: flex;
-            justify-content: center;
-            align-items: center;
             position: relative;
             background-image: 
                 radial-gradient(circle at 20% 30%, rgba(0, 140, 255, 0.1) 0%, transparent 20%),
