@@ -26,6 +26,7 @@ use App\Http\Controllers\SensorsController;
 // Public Routes
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/resend-email', [RegisterController::class, 'resendActivationEmail']);
 
 // Protected Routes
 Route::middleware(['auth:api'])->group(function () {
@@ -65,6 +66,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/my-deliveries', [DeliveryController::class, 'show']);
     Route::post('/delivery/{id}/complete', [DeliveryController::class, 'completeDelivery']);
 });
+
+// Update Stock
+Route::put('/product/stock', [ProductController::class, 'stock']);
 
 // Sensor Routes
 Route::get('/temperature', [SensorsController::class, 'lastTemperature']);

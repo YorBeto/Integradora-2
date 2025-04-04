@@ -17,7 +17,7 @@ class InvoiceController extends Controller
 {
     public function generateInvoice()
     {
-        $randomProductCount = rand(3, 10);
+        $randomProductCount = rand(1, 6);
         $carrier = $this->selectCarriers();
         $items = $this->generateFakeData($randomProductCount);
 
@@ -58,26 +58,29 @@ class InvoiceController extends Controller
     private function generateFakeData($count)
     {
         $products = DB::table('products')->select('id', 'name')->get()->toArray();
-
+    
         if (empty($products)) {
             return response()->json(['error' => 'No hay productos registrados.'], 400);
         }
-
+    
+        // Asegurarse de que no se pidan más productos de los que hay disponibles
+        $count = min($count, count($products));
+    
+        // Mezclar productos y tomar los primeros $count
         shuffle($products);
-
+        $selectedProducts = array_slice($products, 0, $count);
+    
         $data = [];
-        foreach (range(1, $count) as $index) {
-            $product = $products[$index % count($products)];
-
+        foreach ($selectedProducts as $product) {
             $data[] = [
                 'id' => $product->id,
                 'name' => $product->name,
                 'grams' => rand(1, 5000)
             ];
         }
-
+    
         return $data;
-    }
+    }    
 
     public function index()
     {
