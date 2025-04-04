@@ -120,6 +120,34 @@ class AuthController extends Controller
         ], 200);
     }
 
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+    
+        $user = User::where('email', $request->email)->first();
+    
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+    
+        // Obtener el nombre desde la tabla 'people' usando la relación definida en el modelo
+        $userName = $user->person ? $user->person->name : 'Usuario';
+    
+        // Generar una nueva contraseña aleatoria
+        $newPassword = Str::random(10);
+    
+        // Actualizar la contraseña en la base de datos
+        $user->password = Hash::make($newPassword);
+        $user->save();
+    
+        // Enviar la nueva contraseña por correo
+        Mail::to($user->email)->send(new ResetPasswordMail($userName, $newPassword));
+    
+        return response()->json(['message' => 'Se ha enviado una nueva contraseña a su correo.']);
+    }     
+
     public function desactivateAccount(Request $request)
     {
         // Validar que se envíe el ID del trabajador

@@ -57,26 +57,34 @@ class DeliveryController extends Controller
         }
     }
 
-    public function completeDelivery($id)
+    public function completeDelivery($id, Request $request)
     {
         $delivery = Delivery::findOrFail($id);
-
-        if ($delivery->worker_id !== auth()->id()) {
-            return response()->json(['error' => 'No tienes permiso para completar esta entrega.'], 403);
-        }
-
+    
         if ($delivery->status !== 'Pending') {
             return response()->json(['error' => 'La entrega ya fue procesada o completada.'], 400);
         }
-
+    
+        $validator = Validator::make($request->all(), [
+            'carrier' => 'required|string'
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Datos inválidos.', 'details' => $validator->errors()], 422);
+        }
+    
+        if ($request->carrier !== $delivery->carrier) {
+            return response()->json(['error' => 'El carrier proporcionado no coincide con el de la entrega.'], 400);
+        }
+    
         $delivery->update([
             'status' => 'Completed',
             'delivery_date' => now()
         ]);
-
-        $invoice = Invoice::findOrFail($delivery->invoice_id);
-        $invoice->update(['status' => 'Completed']);
-
+    
+        Invoice::where('id', $delivery->invoice_id)->update(['status' => 'Completed']);
+    
         return response()->json(['message' => 'Entrega completada correctamente.']);
     }
+    
 }
