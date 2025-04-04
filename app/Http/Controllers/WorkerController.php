@@ -35,7 +35,7 @@ class WorkerController extends Controller
         return response()->json($workers);
     }
 
-    public function show($id)
+    public function show($id) // como este pero nuevo
     {
         $worker = DB::table('workers')
             ->join('people', 'workers.person_id', '=', 'people.id')
@@ -63,41 +63,76 @@ class WorkerController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validar los datos entrantes
+        $worker = Worker::findOrFail($id);
+        $person = Person::findOrFail($worker->person_id);
+
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'RFID' => 'required|string|max:50',
+            'name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u', // Permite letras y espacios
+            'last_name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u',
+            'phone' => 'required|string|max:20|regex:/^[0-9]+$/',
+            'RFID' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('workers')->ignore($worker->id)
+            ],
+            'email' => [
+                'sometimes',
+                'email',
+                Rule::unique('users')->ignore($person->user_id)
+            ],
+            'RFC' => [
+                'sometimes',
+                'string',
+                'max:13',
+                Rule::unique('workers')->ignore($worker->id)
+            ],
+            'NSS' => [
+                'sometimes',
+                'string',
+                'max:11',
+                Rule::unique('workers')->ignore($worker->id)
+            ]
+        ], [
+            'RFID.unique' => 'Este RFID ya está registrado por otro trabajador',
+            'email.unique' => 'Este correo ya está registrado',
+            'phone.regex' => 'El teléfono solo debe contener números'
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Buscar el trabajador
-        $worker = Worker::find($id);
+        try {
+            DB::transaction(function () use ($request, $person, $worker) {
+                $person->update([
+                    'name' => $request->name,
+                    'last_name' => $request->last_name,
+                    'phone' => $request->phone
+                ]);
 
-        if (!$worker) {
-            return response()->json(['error' => 'Trabajador no encontrado.'], 404);
+                $worker->update([
+                    'RFID' => $request->RFID,
+                    'RFC' => $request->RFC ?? $worker->RFC,
+                    'NSS' => $request->NSS ?? $worker->NSS
+                ]);
+
+                if ($request->email) {
+                    $person->user->update(['email' => $request->email]);
+                }
+            });
+
+            return response()->json([
+                'message' => 'Trabajador actualizado correctamente',
+                'data' => $worker->load('person', 'person.user')
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al actualizar trabajador',
+                'details' => $e->getMessage()
+            ], 500);
         }
-
-        // Actualizar solo los campos permitidos
-        $person = Person::find($worker->person_id);
-        
-        if (!$person) {
-            return response()->json(['error' => 'Persona asociada no encontrada.'], 404);
-        }
-
-        $person->name = $request->input('name');
-        $person->last_name = $request->input('last_name');
-        $person->phone = $request->input('phone');
-        $person->save();
-
-        $worker->RFID = $request->input('RFID');
-        $worker->save();
-
-        return response()->json(['message' => 'Trabajador actualizado correctamente.'], 200);
     }
 
         public function getAvailableWorkers()
