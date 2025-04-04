@@ -17,7 +17,7 @@ class InvoiceController extends Controller
 {
     public function generateInvoice()
     {
-        $randomProductCount = rand(3, 10);
+        $randomProductCount = rand(1, 6);
         $carrier = $this->selectCarriers();
         $items = $this->generateFakeData($randomProductCount);
 
@@ -80,7 +80,7 @@ class InvoiceController extends Controller
         }
     
         return $data;
-    }
+    }    
 
     public function index()
     {

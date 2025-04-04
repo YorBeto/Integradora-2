@@ -88,4 +88,37 @@ class RegisterController extends Controller
             return response()->json(['error' => 'Error al registrar trabajador', 'details' => $e->getMessage()], 500);
         }
     }
+
+    public function resendActivationEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ]);
+    
+        try {
+            $user = User::where('email', $request->email)->firstOrFail();
+            $person = $user->person;
+    
+            if (!$person) {
+                throw new \Exception('No se encontró información de persona para este usuario.');
+            }
+    
+            $newPassword = Str::random(10);
+            $user->password = Hash::make($newPassword);
+            $user->save();
+    
+            $activationLink = URL::temporarySignedRoute(
+                'activation.route',
+                now()->addMinutes(60),
+                ['user' => $user->id]
+            );
+    
+            Mail::to($user->email)->send(new AccountActivationMail($person->name, $activationLink, $newPassword));
+    
+            return response()->json(['message' => 'Correo de activación reenviado con nueva contraseña.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'No se pudo reenviar el correo', 'details' => $e->getMessage()], 500);
+        }
+    }    
 }
+
