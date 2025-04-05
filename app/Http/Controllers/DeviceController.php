@@ -28,9 +28,15 @@ class DeviceController extends Controller
         return response()->json(['success' => 'Device created successfully.', 'device' => $device]);
     }
 
-    public function show(Device $device)
+    public function show($id)
     {
-        return response()->json($device);
+        $device = Device::find($id);
+
+        if (!$device) {
+            return response()->json(['error' => 'Dispositivo no encontrado.'], 404);
+        }
+
+        return response()->json($device, 200);
     }
 
     public function update(Request $request, Device $device)
