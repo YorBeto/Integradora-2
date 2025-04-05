@@ -14,28 +14,13 @@ class WorkerController extends Controller
 {
     public function index()
     {
-        $workers = DB::table('workers')
-            ->join('people', 'workers.person_id', '=', 'people.id')
-            ->join('users', 'people.user_id', '=', 'users.id')  
-            ->select(
-                'workers.id',
-                'users.email',
-                'people.name',
-                'people.last_name',
-                'people.birth_date',
-                DB::raw('TIMESTAMPDIFF(YEAR, people.birth_date, CURDATE()) as age'),
-                'people.phone',
-                'workers.RFID',
-                'workers.RFC',
-                'workers.NSS',
-                'users.activate'
-            )
-            ->get();
+        // Consulta la vista que contiene los workers
+        $workers = DB::table('workers_view')->get();
 
-        return response()->json($workers);
+        return response()->json(['data' => $workers], 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function show($id)
+    public function show($id) // como este pero nuevo
     {
         $worker = DB::table('workers')
             ->join('people', 'workers.person_id', '=', 'people.id')
@@ -63,66 +48,100 @@ class WorkerController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validar los datos entrantes
+        $worker = Worker::findOrFail($id);
+        $person = Person::findOrFail($worker->person_id);
+
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'RFID' => 'required|string|max:50',
+            'name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u', // Permite letras y espacios
+            'last_name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u',
+            'phone' => 'required|string|max:20|regex:/^[0-9]+$/',
+            'RFID' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('workers')->ignore($worker->id)
+            ],
+            'email' => [
+                'sometimes',
+                'email',
+                Rule::unique('users')->ignore($person->user_id)
+            ],
+            'RFC' => [
+                'sometimes',
+                'string',
+                'max:13',
+                Rule::unique('workers')->ignore($worker->id)
+            ],
+            'NSS' => [
+                'sometimes',
+                'string',
+                'max:11',
+                Rule::unique('workers')->ignore($worker->id)
+            ]
+        ], [
+            'RFID.unique' => 'Este RFID ya está registrado por otro trabajador',
+            'email.unique' => 'Este correo ya está registrado',
+            'phone.regex' => 'El teléfono solo debe contener números'
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Buscar el trabajador
+        try {
+            DB::transaction(function () use ($request, $person, $worker) {
+                $person->update([
+                    'name' => $request->name,
+                    'last_name' => $request->last_name,
+                    'phone' => $request->phone
+                ]);
+
+                $worker->update([
+                    'RFID' => $request->RFID,
+                    'RFC' => $request->RFC ?? $worker->RFC,
+                    'NSS' => $request->NSS ?? $worker->NSS
+                ]);
+
+                if ($request->email) {
+                    $person->user->update(['email' => $request->email]);
+                }
+            });
+
+            return response()->json([
+                'message' => 'Trabajador actualizado correctamente',
+                'data' => $worker->load('person', 'person.user')
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al actualizar trabajador',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }      
+
+    public function availableWorkers()
+    {
+        $maxOrders = 4;
+        $workers = Worker::withCount(['invoices' => function ($query) {
+            $query->where('status', 'Assigned');
+        }])->having('invoices_count', '<', $maxOrders)->get();
+
+        return response()->json($workers);
+    }
+
+    public function assignedInvoices($id)
+    {
         $worker = Worker::find($id);
 
         if (!$worker) {
             return response()->json(['error' => 'Trabajador no encontrado.'], 404);
         }
 
-        // Actualizar solo los campos permitidos
-        $person = Person::find($worker->person_id);
-        
-        if (!$person) {
-            return response()->json(['error' => 'Persona asociada no encontrada.'], 404);
-        }
+        $invoices = Invoice::where('assigned_to', $id)
+            ->where('status', 'Assigned')
+            ->get();
 
-        $person->name = $request->input('name');
-        $person->last_name = $request->input('last_name');
-        $person->phone = $request->input('phone');
-        $person->save();
-
-        $worker->RFID = $request->input('RFID');
-        $worker->save();
-
-        return response()->json(['message' => 'Trabajador actualizado correctamente.'], 200);
+        return response()->json($invoices);
     }
-
-        public function getAvailableWorkers()
-        {
-            $maxOrders = 4;
-            $workers = Worker::withCount(['invoices' => function ($query) {
-                $query->where('status', 'Assigned');
-            }])->having('invoices_count', '<', $maxOrders)->get();
-
-            return response()->json($workers);
-        }
-
-        public function getAssignedInvoices($workerId)
-        {
-            $worker = Worker::find($workerId);
-
-            if (!$worker) {
-                return response()->json(['error' => 'Trabajador no encontrado.'], 404);
-            }
-
-            $invoices = Invoice::where('assigned_to', $workerId)
-                ->where('status', 'Assigned') 
-                ->get();
-
-            return response()->json($invoices);
-        }
-
 }

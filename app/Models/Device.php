@@ -14,6 +14,7 @@ class Device extends Model
         'name',
         'area_id',
         'password',
+        'area_id',
         'reading_time',
         'response_time',
     ];

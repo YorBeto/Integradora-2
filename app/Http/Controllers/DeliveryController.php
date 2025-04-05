@@ -11,7 +11,6 @@ use App\Models\Delivery;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-
 class DeliveryController extends Controller
 {
     public function index()
@@ -27,57 +26,65 @@ class DeliveryController extends Controller
         try {
             // Obtener el usuario desde el token
             $payload = JWTAuth::parseToken()->getPayload();
-            $user = $payload->get('user'); 
-    
+            $user = $payload->get('user');
+
             if (!$user) {
                 return response()->json(['error' => 'Usuario no autenticado'], 401);
             }
-    
+
             // Buscar en la tabla 'people' la persona asociada a este usuario
             $person = DB::table('people')->where('user_id', $user['id'])->first();
-    
+
             if (!$person) {
                 return response()->json(['error' => 'No se encontró información en people'], 404);
             }
-    
+
             // Buscar el trabajador en 'workers' asociado a esta persona
             $worker = DB::table('workers')->where('person_id', $person->id)->first();
-    
+
             if (!$worker) {
                 return response()->json(['error' => 'No se encontró un trabajador asociado'], 404);
             }
-    
+
             // Obtener las entregas donde worker_id coincida
             $deliveries = DB::table('delivery_view')
                 ->where('worker_id', $worker->id)
                 ->get();
-    
+
             return response()->json(['data' => $deliveries], 200, [], JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error interno del servidor', 'message' => $e->getMessage()], 500);
         }
     }
 
-    public function completeDelivery($deliveryId)
+    public function completeDelivery($id, Request $request)
     {
-        $delivery = Delivery::findOrFail($deliveryId);
-        
-        if ($delivery->worker_id !== auth()->id()) {
-            return response()->json(['error' => 'No tienes permiso para completar esta entrega.'], 403);
-        }
-
+        $delivery = Delivery::findOrFail($id);
+    
         if ($delivery->status !== 'Pending') {
             return response()->json(['error' => 'La entrega ya fue procesada o completada.'], 400);
         }
-
+    
+        $validator = Validator::make($request->all(), [
+            'carrier' => 'required|string'
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Datos inválidos.', 'details' => $validator->errors()], 422);
+        }
+    
+        if ($request->carrier !== $delivery->carrier) {
+            return response()->json(['error' => 'El carrier proporcionado no coincide con el de la entrega.'], 400);
+        }
+    
         $delivery->update([
             'status' => 'Completed',
             'delivery_date' => now()
         ]);
-
-        $invoice = Invoice::findOrFail($delivery->invoice_id);
-        $invoice->update(['status' => 'Completed']);
-
+    
+        Invoice::where('id', $delivery->invoice_id)->update(['status' => 'Completed']);
+    
         return response()->json(['message' => 'Entrega completada correctamente.']);
     }
+    
 }

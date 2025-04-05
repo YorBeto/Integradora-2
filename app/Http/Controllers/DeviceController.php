@@ -29,7 +29,7 @@ class DeviceController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required',
             'password' => 'required',
             'area_id' => 'required|exists:areas,id',
@@ -37,7 +37,7 @@ class DeviceController extends Controller
             'response_time' => 'required|integer',
         ]);
 
-        $device = Device::create($request->all());
+        $device = Device::create($validatedData);
 
         return response()->json(['success' => 'Device created successfully.', 'device' => $device]);
     }
