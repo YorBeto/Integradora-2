@@ -8,43 +8,48 @@ use Illuminate\Http\Request;
 
 class WeightSensorController extends Controller
 {
-    public function lastRegister()
+    public function lastRegisters()
     {
-        // Obtener el último registro de WeightSensor
-        $ultimo = WeightSensor::orderBy('event_date', 'desc')->first();
+        // Obtener los últimos 5 registros de WeightSensor
+        $ultimos = WeightSensor::orderBy('event_date', 'desc')->take(5)->get();
 
-        if ($ultimo) {
-            // Buscar el producto usando el 'exit_code' que está en ambas tablas
-            $producto = Product::where('exit_code', $ultimo->exit_code)->first();
+        if ($ultimos->isNotEmpty()) {
+            $result = [];
 
-            if ($producto) {
-                if ($ultimo->status == 0) {
-                    $producto->stock_weight -= $ultimo->weight_kg;
-                    $action = 'restado'; // Acción realizada para depuración
+            foreach ($ultimos as $ultimo) {
+                // Buscar el producto usando el 'exit_code' que está en ambas tablas
+                $producto = Product::where('exit_code', $ultimo->exit_code)->first();
+
+                if ($producto) {
+                    if ($ultimo->status == 0) {
+                        $producto->stock_weight -= $ultimo->weight_kg;
+                        $action = 'producto entregado'; // Acción realizada para depuración
+                    }
+
+                    if ($ultimo->status == 1) {
+                        $producto->stock_weight += $ultimo->weight_kg;
+                        $action = 'producto almacenado'; // Acción realizada para depuración
+                    }
+
+                    $producto->save();
+
+                    // Agregar el valor de 'action' al objeto $ultimo
+                    $ultimo->action = $action;
+                } else {
+                    $ultimo->action = 'Producto no encontrado';
                 }
 
-                if ($ultimo->status == 1) {
-                    $producto->stock_weight += $ultimo->weight_kg;
-                    $action = 'sumado'; // Acción realizada para depuración
-                }
-
-                $producto->save();
-
-                return response()->json([
-                    'success' => true,
-                    'data' => $ultimo,
-                    'action' => $action,
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Producto no encontrado.',
-                ], 404);
+                $result[] = $ultimo;
             }
+
+            return response()->json([
+                'success' => true,
+                'data' => $result,
+            ]);
         } else {
             return response()->json([
                 'success' => false,
-                'message' => 'No se encontró ningún registro.',
+                'message' => 'No se encontraron registros.',
             ], 404);
         }
     }
