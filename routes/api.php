@@ -45,6 +45,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/workers/invoices', [WorkerController::class, 'availableWorkers']);
     Route::get('/worker/{id}', [WorkerController::class, 'show']);
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
+    Route::delete('/worker/{id}', [WorkerController::class, 'destroy']);
     Route::get('/workers/{id}/invoices', [WorkerController::class, 'assignedInvoices']);
 
     // Invoice Routes

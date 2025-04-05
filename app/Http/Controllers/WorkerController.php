@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Worker;
 use App\Models\Person;
+use app\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Invoice;
@@ -118,7 +119,7 @@ class WorkerController extends Controller
                 'details' => $e->getMessage()
             ], 500);
         }
-    }      
+    }    
 
     public function availableWorkers()
     {
