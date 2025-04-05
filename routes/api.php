@@ -93,7 +93,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::get('/pir-sensor', [PirController::class, 'getLastPirStatus']);
 
     // Weight Sensor
-    Route::get('/weight-sensor', [WeightSensorController::class, 'lastRegister']);
+    Route::get('/weight-sensor', [WeightSensorController::class, 'lastRegisters']);
 
     //get areas
     Route::get('/areas', [DeviceController::class, 'getAreas']);
+
+    Route::post('/store/light-sensor', [LightSensorController::class, 'storeLightData']);
