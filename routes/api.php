@@ -13,6 +13,7 @@ use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\LightSensorController;
 use App\Http\Controllers\TemperatureHumiditySensorController;
 use App\Http\Controllers\PirController;
+use App\Http\Controllers\SensorsController;
 
 
 /*
@@ -101,3 +102,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
     Route::post('/store/light-sensor', [LightSensorController::class, 'storeLightData']);
+    Route::get('/sensors/area/{area_id}', [SensorsController::class, 'sensoresporarea']);

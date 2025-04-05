@@ -23,13 +23,18 @@ class LightSensorController extends Controller
 
     public function storeLightData(Request $request)
     {
-        $validated = $request->validate([
-            'area_id' => 'required|exists:areas,id',
+        $validator = Validator::make($request->all(), [
             'status' => 'required|boolean',
-            'event_date' => 'required|date',
+            'area_id' => 'required|exists:areas,id',
             'alert_triggered' => 'required|boolean',
-            'alert_message' => 'required|string',
+            'alert_message' => 'nullable|string',
+            'event_date' => 'required|date'
         ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $validated = $validator->validated();
+        Log::info('Light sensor data received:', $validated);
         
         $sensorData = LightSensor::create([
             'status' => $validated['status'],
@@ -37,7 +42,6 @@ class LightSensorController extends Controller
             'alert_triggered' => $validated['alert_triggered'],
             'alert_message' => $validated['alert_message'],
             'event_date' => $validated['event_date'],
-            'event_date' => now()
         ]);
         
         // Emitir evento a Pusher
