@@ -98,3 +98,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
     //get areas
     Route::get('/areas', [DeviceController::class, 'getAreas']);
+
+
+    Route::post('/store/light-sensor', [LightSensorController::class, 'storeLightData']);
