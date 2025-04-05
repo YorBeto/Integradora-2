@@ -60,10 +60,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
 
     // Devices
-    Route::get('/divice', [DeviceController::class, 'index']);
+    Route::get('/devices', [DeviceController::class, 'index']);
     Route::post('/device', [DeviceController::class, 'store']);
     Route::get('/device/{id}', [DeviceController::class, 'show']);
-    Route::put('/device/{id}', [DeviceController::class, 'update']);
+    Route::post('/device/{id}', [DeviceController::class, 'update']);
 
     // Deliveries
     Route::get('/deliveries', [DeliveryController::class, 'index']);
@@ -83,3 +83,6 @@ Route::middleware(['auth:api'])->group(function () {
 
     // PIR Sensor
     Route::get('/pir-sensor', [PirController::class, 'getLastPirStatus']);
+
+    //get areas
+    Route::get('/areas', [DeviceController::class, 'getAreas']);

@@ -92,7 +92,7 @@ return [
         ],
         'mongodb' => [
         'driver' => 'mongodb',
-        'dsn' => env('DB_URI', 'mongodb://admin:GATEE1234@18.218.51.166:27017/'),
+        'dsn' => env('DB_URI', 'mongodb://admin:GATEE1234@13.59.65.43:27017/'),
         'database' => 'Gatee',
 ],
 
