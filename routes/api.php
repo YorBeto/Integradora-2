@@ -10,7 +10,10 @@ use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DeliveryController;
-use App\Http\Controllers\SensorsController;
+use App\Http\Controllers\LightSensorController;
+use App\Http\Controllers\TemperatureHumiditySensorController;
+use App\Http\Controllers\PirController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +47,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/workers', [WorkerController::class, 'index']);
     Route::get('/workers/invoices', [WorkerController::class, 'availableWorkers']);
     Route::get('/worker/{id}', [WorkerController::class, 'show']);
+    Route::get('/worker-data', [WorkerController::class, 'getWorkerData']);
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
     Route::delete('/worker/{id}', [WorkerController::class, 'destroy']);
     Route::get('/workers/{id}/invoices', [WorkerController::class, 'assignedInvoices']);
@@ -57,10 +61,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
 
     // Devices
-    Route::get('/device', [DeviceController::class, 'index']);
+    Route::get('/devices', [DeviceController::class, 'index']);
     Route::post('/device', [DeviceController::class, 'store']);
     Route::get('/device/{id}', [DeviceController::class, 'show']);
-    Route::put('/device/{id}', [DeviceController::class, 'update']);
+    Route::post('/device/{id}', [DeviceController::class, 'update']);
 
     // Delivery Routes
     Route::get('/deliveries', [DeliveryController::class, 'index']);
@@ -74,10 +78,24 @@ Route::put('/product/stock', [ProductController::class, 'stock']);
 // Sensor Routes
 Route::get('/temperature', [SensorsController::class, 'lastTemperature']);
 
+  // Devices
+  Route::get('/device', [DeviceController::class, 'index']);
+  Route::post('/device', [DeviceController::class, 'store']);
+  Route::get('/device/{id}', [DeviceController::class, 'show']);
+  Route::put('/device/{id}', [DeviceController::class, 'update']);
+
 // Sanctum Protected Route
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
     // Light Sensor
     Route::get('/light-sensor', [LightSensorController::class, 'getLastLightStatus']);
+
+    // Temperature and Humidity Sensor
     Route::get('/temperature-humidity-sensor', [TemperatureHumiditySensorController::class, 'getLastTemperatureHumidityStatus']);
+
+    // PIR Sensor
+    Route::get('/pir-sensor', [PirController::class, 'getLastPirStatus']);
+
+    //get areas
+    Route::get('/areas', [DeviceController::class, 'getAreas']);

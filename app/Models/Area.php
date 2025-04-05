@@ -11,7 +11,11 @@ class Area extends Model
 
     protected $table = 'areas';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['id','name'];
 
-    protected $hidden = ['id', 'created_at', 'updated_at'];
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
+    }
+
 }

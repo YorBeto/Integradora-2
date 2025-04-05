@@ -9,7 +9,9 @@ use app\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Invoice;
-
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class WorkerController extends Controller
 {
@@ -56,6 +58,7 @@ class WorkerController extends Controller
             'name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u', // Permite letras y espacios
             'last_name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u',
             'phone' => 'required|string|max:20|regex:/^[0-9]+$/',
+            'birth_date' => 'required|date', 
             'RFID' => [
                 'required',
                 'string',
@@ -94,7 +97,8 @@ class WorkerController extends Controller
                 $person->update([
                     'name' => $request->name,
                     'last_name' => $request->last_name,
-                    'phone' => $request->phone
+                    'phone' => $request->phone,
+                    'birth_date' => $request->birth_date
                 ]);
 
                 $worker->update([
@@ -110,7 +114,6 @@ class WorkerController extends Controller
 
             return response()->json([
                 'message' => 'Trabajador actualizado correctamente',
-                'data' => $worker->load('person', 'person.user')
             ], 200);
 
         } catch (\Exception $e) {
@@ -144,5 +147,50 @@ class WorkerController extends Controller
             ->get();
 
         return response()->json($invoices);
+    }
+
+    public function getWorkerData(Request $request)
+    {
+        try {
+            // Obtener el payload del token JWT
+            $payload = JWTAuth::parseToken()->getPayload();
+            $userId = $payload->get('sub'); // Obtener el ID del usuario desde el token
+
+            // Consultar los datos del trabajador con las relaciones necesarias
+            $worker = Worker::join('people', 'workers.person_id', '=', 'people.id')
+                ->join('users', 'people.user_id', '=', 'users.id')
+                ->where('users.id', $userId)
+                ->select(
+                    'people.name',
+                    'users.email',
+                    'workers.RFC',
+                    'workers.RFID',
+                    'workers.NSS',
+                    'people.phone'
+                )
+                ->first();
+
+            // Verificar si se encontró el trabajador
+            if (!$worker) {
+                return response()->json(['error' => 'No se encontró información para este usuario.'], 404);
+            }
+
+            // Retornar los datos del trabajador
+            return response()->json([
+                'name' => $worker->name,
+                'email' => $worker->email,
+                'RFC' => $worker->RFC,
+                'RFID' => $worker->RFID,
+                'NSS' => $worker->NSS,
+                'phone' => $worker->phone,
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Manejar errores (por ejemplo, token inválido o expirado)
+            return response()->json([
+                'error' => 'Error al procesar el token',
+                'details' => $e->getMessage()
+            ], 500);
+        }
     }
 }
