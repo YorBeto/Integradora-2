@@ -11,20 +11,47 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Mail\AccountActivationMail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\Rule;
+use App\Models\Person;
+use App\Models\Worker;
 
 class RegisterController extends Controller
 {
     public function registerWorker(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->whereNull('deleted_at') // Ignorar registros eliminados
+            ],
             'name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'birth_date' => 'required|date',
-            'phone' => 'nullable|string|max:20|unique:people,phone',
-            'RFID' => 'nullable|string|max:255|unique:workers,RFID',
-            'RFC' => 'nullable|string|max:255|unique:workers,RFC',
-            'NSS' => 'nullable|string|max:255|unique:workers,NSS'
+            'phone' => [
+                'nullable',
+                'string',
+                'max:20',
+                Rule::unique('people', 'phone')->whereNull('deleted_at') // Ignorar registros eliminados
+            ],
+            'RFID' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('workers', 'RFID')->whereNull('deleted_at') // Ignorar registros eliminados
+            ],
+            'RFC' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('workers', 'RFC')->whereNull('deleted_at') // Ignorar registros eliminados
+            ],
+            'NSS' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('workers', 'NSS')->whereNull('deleted_at') // Ignorar registros eliminados
+            ]
         ], [
             'email.unique' => 'El correo electrónico ya está registrado.',
             'phone.unique' => 'El teléfono ya está registrado.',
