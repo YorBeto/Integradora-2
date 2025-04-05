@@ -124,6 +124,24 @@ class WorkerController extends Controller
         }
     }    
 
+    public function destroy($id)
+    {
+        try {
+            DB::statement('CALL MarkDeletedWorker(?)', [$id]);
+
+            return response()->json([
+                'mensaje' => 'Trabajador eliminado lógicamente correctamente.',
+                'id' => $id
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'mensaje' => 'Error al eliminar el trabajador.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function availableWorkers()
     {
         $maxOrders = 4;
