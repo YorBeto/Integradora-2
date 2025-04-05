@@ -13,6 +13,7 @@ use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\LightSensorController;
 use App\Http\Controllers\TemperatureHumiditySensorController;
 use App\Http\Controllers\PirController;
+use App\Http\Controllers\WeightSensorController;
 
 
 /*
@@ -60,12 +61,6 @@ Route::middleware(['auth:api'])->group(function () {
     // Product Routes
     Route::get('/products', [ProductController::class, 'index']);
 
-    // Devices
-    Route::get('/devices', [DeviceController::class, 'index']);
-    Route::post('/device', [DeviceController::class, 'store']);
-    Route::get('/device/{id}', [DeviceController::class, 'show']);
-    Route::post('/device/{id}', [DeviceController::class, 'update']);
-
     // Delivery Routes
     Route::get('/deliveries', [DeliveryController::class, 'index']);
     Route::get('/my-deliveries', [DeliveryController::class, 'show']);
@@ -78,11 +73,11 @@ Route::put('/product/stock', [ProductController::class, 'stock']);
 // Sensor Routes
 Route::get('/temperature', [SensorsController::class, 'lastTemperature']);
 
-  // Devices
-  Route::get('/device', [DeviceController::class, 'index']);
-  Route::post('/device', [DeviceController::class, 'store']);
-  Route::get('/device/{id}', [DeviceController::class, 'show']);
-  Route::put('/device/{id}', [DeviceController::class, 'update']);
+// Devices
+Route::get('/device', [DeviceController::class, 'index']);
+Route::post('/device', [DeviceController::class, 'store']);
+Route::get('/device/{id}', [DeviceController::class, 'show']);
+Route::put('/device/{id}', [DeviceController::class, 'update']);
 
 // Sanctum Protected Route
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -96,6 +91,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
     // PIR Sensor
     Route::get('/pir-sensor', [PirController::class, 'getLastPirStatus']);
+
+    // Weight Sensor
+    Route::get('/weight-sensor', [WeightSensorController::class, 'lastRegister']);
 
     //get areas
     Route::get('/areas', [DeviceController::class, 'getAreas']);
