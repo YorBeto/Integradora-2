@@ -47,6 +47,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/workers', [WorkerController::class, 'index']);
     Route::get('/workers/invoices', [WorkerController::class, 'availableWorkers']);
     Route::get('/worker/{id}', [WorkerController::class, 'show']);
+    Route::get('/worker-data', [WorkerController::class, 'getWorkerData']);
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
     Route::get('/workers/{id}/invoices', [WorkerController::class, 'assignedInvoices']);
 
@@ -75,6 +76,12 @@ Route::put('/product/stock', [ProductController::class, 'stock']);
 
 // Sensor Routes
 Route::get('/temperature', [SensorsController::class, 'lastTemperature']);
+
+  // Devices
+  Route::get('/device', [DeviceController::class, 'index']);
+  Route::post('/device', [DeviceController::class, 'store']);
+  Route::get('/device/{id}', [DeviceController::class, 'show']);
+  Route::put('/device/{id}', [DeviceController::class, 'update']);
 
 // Sanctum Protected Route
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
