@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Worker;
 use App\Models\Person;
+use app\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Invoice;
@@ -121,7 +122,25 @@ class WorkerController extends Controller
                 'details' => $e->getMessage()
             ], 500);
         }
-    }      
+    }    
+
+    public function destroy($id)
+    {
+        try {
+            DB::statement('CALL MarkDeletedWorker(?)', [$id]);
+
+            return response()->json([
+                'mensaje' => 'Trabajador eliminado lógicamente correctamente.',
+                'id' => $id
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'mensaje' => 'Error al eliminar el trabajador.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function availableWorkers()
     {

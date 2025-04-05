@@ -13,7 +13,6 @@ use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\LightSensorController;
 use App\Http\Controllers\TemperatureHumiditySensorController;
 use App\Http\Controllers\PirController;
-use App\Http\Controllers\SensorsController;
 
 
 /*
@@ -50,6 +49,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/worker/{id}', [WorkerController::class, 'show']);
     Route::get('/worker-data', [WorkerController::class, 'getWorkerData']);
     Route::put('/worker/{id}', [WorkerController::class, 'update']);
+    Route::delete('/worker/{id}', [WorkerController::class, 'destroy']);
     Route::get('/workers/{id}/invoices', [WorkerController::class, 'assignedInvoices']);
 
     // Invoice Routes
@@ -59,6 +59,12 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Product Routes
     Route::get('/products', [ProductController::class, 'index']);
+
+    // Devices
+    Route::get('/devices', [DeviceController::class, 'index']);
+    Route::post('/device', [DeviceController::class, 'store']);
+    Route::get('/device/{id}', [DeviceController::class, 'show']);
+    Route::post('/device/{id}', [DeviceController::class, 'update']);
 
     // Delivery Routes
     Route::get('/deliveries', [DeliveryController::class, 'index']);
@@ -90,5 +96,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
     // PIR Sensor
     Route::get('/pir-sensor', [PirController::class, 'getLastPirStatus']);
-    Route::get('/temperature-humidity-sensor', [TemperatureHumiditySensorController::class, 'getLastTemperatureHumidityStatus']);
 
+    //get areas
+    Route::get('/areas', [DeviceController::class, 'getAreas']);

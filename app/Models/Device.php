@@ -10,10 +10,17 @@ class Device extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'name',
+        'area_id',
         'password',
         'area_id',
         'reading_time',
         'response_time',
     ];
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
 }

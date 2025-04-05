@@ -27,7 +27,8 @@ return new class extends Migration
                 workers.RFID,
                 workers.RFC,
                 workers.NSS,
-                users.activate
+                users.activate,
+                workers.deleted_at
             FROM
                 workers
             INNER JOIN people ON workers.person_id = people.id
@@ -43,7 +44,8 @@ return new class extends Migration
                 workers.RFID,
                 workers.RFC,
                 workers.NSS,
-                users.activate;
+                users.activate,
+                workers.deleted_at;
         ");
     }
 
