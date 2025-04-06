@@ -27,6 +27,7 @@ class WorkerController extends Controller
     {
         $worker = DB::table('workers')
             ->join('people', 'workers.person_id', '=', 'people.id')
+            ->join('users', 'people.user_id', '=', 'users.id')
             ->where('workers.id', $id)
             ->select(
                 'workers.id',
@@ -34,6 +35,7 @@ class WorkerController extends Controller
                 'people.last_name',
                 'people.birth_date',
                 DB::raw('TIMESTAMPDIFF(YEAR, people.birth_date, CURDATE()) as age'),
+                'users.email',
                 'people.phone',
                 'workers.RFID',
                 'workers.RFC',
@@ -55,37 +57,46 @@ class WorkerController extends Controller
         $person = Person::findOrFail($worker->person_id);
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u', // Permite letras y espacios
+            'name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u', 
             'last_name' => 'required|string|max:255|regex:/^[\pL\s\-]+$/u',
-            'phone' => 'required|string|max:20|regex:/^[0-9]+$/',
+            'phone' => [
+                'required',
+                'string',
+                'max:20',
+                'regex:/^[0-9]+$/',
+                Rule::unique('people', 'phone')->ignore($person->id)->whereNull('deleted_at') // Ignorar registros eliminados
+            ],
             'birth_date' => 'required|date', 
             'RFID' => [
                 'required',
                 'string',
                 'max:50',
-                Rule::unique('workers')->ignore($worker->id)
+                Rule::unique('workers', 'RFID')->ignore($worker->id)->whereNull('deleted_at') // Ignorar registros eliminados
             ],
             'email' => [
                 'sometimes',
                 'email',
-                Rule::unique('users')->ignore($person->user_id)
+                Rule::unique('users', 'email')->ignore($person->user_id)->whereNull('deleted_at') // Ignorar registros eliminados
             ],
             'RFC' => [
                 'sometimes',
                 'string',
                 'max:13',
-                Rule::unique('workers')->ignore($worker->id)
+                Rule::unique('workers', 'RFC')->ignore($worker->id)->whereNull('deleted_at') // Ignorar registros eliminados
             ],
             'NSS' => [
                 'sometimes',
                 'string',
                 'max:11',
-                Rule::unique('workers')->ignore($worker->id)
+                Rule::unique('workers', 'NSS')->ignore($worker->id)->whereNull('deleted_at') // Ignorar registros eliminados
             ]
         ], [
             'RFID.unique' => 'Este RFID ya está registrado por otro trabajador',
             'email.unique' => 'Este correo ya está registrado',
-            'phone.regex' => 'El teléfono solo debe contener números'
+            'phone.regex' => 'El teléfono solo debe contener números',
+            'phone.unique' => 'El teléfono ya está registrado',
+            'RFC.unique' => 'El RFC ya está registrado',
+            'NSS.unique' => 'El NSS ya está registrado'
         ]);
 
         if ($validator->fails()) {
