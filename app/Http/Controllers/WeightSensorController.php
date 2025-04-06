@@ -5,43 +5,47 @@ namespace App\Http\Controllers;
 use App\Models\WeightSensor;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Events\TriggerLastRegisters;
 
 class WeightSensorController extends Controller
 {
     public function lastRegisters()
     {
-        // Obtener los últimos 5 registros de WeightSensor
         $ultimos = WeightSensor::orderBy('event_date', 'desc')->take(5)->get();
-
+    
         if ($ultimos->isNotEmpty()) {
             $result = [];
-
-            foreach ($ultimos as $ultimo) {
-                // Buscar el producto usando el 'exit_code' que está en ambas tablas
+    
+            foreach ($ultimos as $index => $ultimo) {
                 $producto = Product::where('exit_code', $ultimo->exit_code)->first();
-
+    
                 if ($producto) {
-                    if ($ultimo->status == 0) {
-                        $producto->stock_weight -= $ultimo->weight_kg;
-                        $action = 'producto entregado'; // Acción realizada para depuración
+                    if ($index === 0 && !$ultimo->processed) {
+                        if ($ultimo->status == 0) {
+                            $producto->stock_weight -= $ultimo->weight_kg;
+                            $action = 'producto entregado (stock actualizado)';
+                        } elseif ($ultimo->status == 1) {
+                            $producto->stock_weight += $ultimo->weight_kg;
+                            $action = 'producto almacenado (stock actualizado)';
+                        }
+    
+                        $producto->save();
+    
+                        // Marcar como procesado
+                        $ultimo->processed = true;
+                        $ultimo->save();
+                    } else {
+                        $action = $ultimo->processed ? 'ya procesado (sin afectar stock)' : 'sin afectar stock';
                     }
-
-                    if ($ultimo->status == 1) {
-                        $producto->stock_weight += $ultimo->weight_kg;
-                        $action = 'producto almacenado'; // Acción realizada para depuración
-                    }
-
-                    $producto->save();
-
-                    // Agregar el valor de 'action' al objeto $ultimo
+    
                     $ultimo->action = $action;
                 } else {
                     $ultimo->action = 'Producto no encontrado';
                 }
-
+    
                 $result[] = $ultimo;
             }
-
+    
             return response()->json([
                 'success' => true,
                 'data' => $result,
@@ -52,5 +56,5 @@ class WeightSensorController extends Controller
                 'message' => 'No se encontraron registros.',
             ], 404);
         }
-    }
+    }    
 }
