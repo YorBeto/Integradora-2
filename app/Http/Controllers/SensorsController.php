@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Temperature;
-use App\Models\Pir;
+use App\Models\PirSensor as Pir;
+use App\Models\Area;
+use App\Models\TemperatureHumiditySensor;
+Use App\Models\LightSensor;
+
+
 
 class SensorsController extends Controller
 {
@@ -17,5 +21,24 @@ class SensorsController extends Controller
         }
 
         return response()->json($temperatures);
+    }
+
+    public function sensoresporarea($area_id)
+    {
+        $area = Area::find($area_id);
+    
+        if (!$area) {
+            return response()->json(['message' => 'Area not found'], 404);
+        }
+    
+        $temperatureSensors = TemperatureHumiditySensor::where('area_id', $area_id)->orderBy('event_date', 'desc')->first();
+        $pirSensors = Pir::where('area_id', $area_id)->orderBy('event_date', 'desc')->first();
+    
+        $sensors = [
+            'temperature_sensors' => $temperatureSensors,
+            'pir_sensors' => $pirSensors,
+        ];
+    
+        return response()->json($sensors);
     }
 }

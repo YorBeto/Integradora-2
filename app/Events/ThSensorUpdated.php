@@ -3,32 +3,38 @@
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 
 class ThSensorUpdated implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
 
-    public $sensorData;
+    public $thData;
 
-    public function __construct($sensorData)
+    public function __construct($thData)
     {
-        $this->sensorData = $sensorData;
+        $this->thData = $thData;
     }
 
     public function broadcastOn()
     {
-        return new Channel('sensor-updates');
+        return new Channel('th-sensor-updates');
     }
 
+    public function broadcastAs()
+    {
+        return 'ThSensorUpdated';
+    }
+
+    // Añade este método para definir explícitamente la estructura de datos
     public function broadcastWith()
     {
         return [
-            'sensorType' => 'th',
-            'data' => $this->sensorData
+            'temperature_c' => $this->thData->temperature_c,
+            'humidity_percent' => $this->thData->humidity_percent,
+            'event_date' => $this->thData->event_date,
+            '_id' => $this->thData->_id ?? null
         ];
     }
 }
