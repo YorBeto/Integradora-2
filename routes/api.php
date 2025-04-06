@@ -94,7 +94,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
     // Weight Sensor
     Route::get('/weight-sensor', [WeightSensorController::class, 'lastRegisters']);
-    Route::post('/trigger-last-registers', [WeightSensorController::class, 'triggerLastRegistersPost']);
+    Route::post('/trigger-last-registers', [WeightSensorController::class, 'triggerLastRegisters']);
 
     //get areas
     Route::get('/areas', [DeviceController::class, 'getAreas']);

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WeightSensor;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Events\TriggerLastRegisters;
+use App\Events\SensorUpdated;
 
 class WeightSensorController extends Controller
 {
@@ -56,5 +56,14 @@ class WeightSensorController extends Controller
                 'message' => 'No se encontraron registros.',
             ], 404);
         }
-    }    
+    }
+    
+    public function triggerLastRegisters()
+    {
+        $response = $this->lastRegisters();
+    
+        broadcast(new SensorUpdated($response->getData()->data));
+    
+        return $response;
+    }
 }
