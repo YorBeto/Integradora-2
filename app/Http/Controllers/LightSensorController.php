@@ -22,25 +22,23 @@ class LightSensorController extends Controller
     }
 
     // En tu controlador Laravel
-public function triggerLightUpdate()
-{
-    $lastStatus = LightSensor::orderBy('event_date', 'desc')->first();
-    
-    if (!$lastStatus) {
-        return response()->json(['message' => 'No data found'], 404);
+    public function triggerLightUpdate()
+    {
+        $lastStatus = LightSensor::orderBy('event_date', 'desc')->first();
+        
+        if (!$lastStatus) {
+            return response()->json(['message' => 'No data found'], 404);
+        }
+        
+        // Asegúrate que los campos coincidan con lo que espera Angular
+        $dataToSend = [
+            'status' => $lastStatus->status, // 'on' u 'off'
+            'event_date' => $lastStatus->event_date,
+            // otros campos que uses en el frontend
+        ];
+        
+        event(new LightSensorUpdated($dataToSend));
+        
+        return response()->json(['message' => 'Update triggered']);
     }
-    
-    // Asegúrate que los campos coincidan con lo que espera Angular
-    $dataToSend = [
-        'status' => $lastStatus->status, // 'on' u 'off'
-        'event_date' => $lastStatus->event_date,
-        // otros campos que uses en el frontend
-    ];
-    
-    event(new LightSensorUpdated($dataToSend));
-    
-    return response()->json(['message' => 'Update triggered']);
-}
-
-    
 }

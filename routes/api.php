@@ -94,13 +94,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
     // Weight Sensor
     Route::get('/weight-sensor', [WeightSensorController::class, 'lastRegisters']);
-    Route::post('/trigger-last-registers', [WeightSensorController::class, 'triggerLastRegisters']);
 
     //get areas
     Route::get('/areas', [DeviceController::class, 'getAreas']);
 
-
     Route::get('/sensors/area/{area_id}', [SensorsController::class, 'sensoresporarea']);
+
     Route::get('/light-sensor/trigger-update', [LightSensorController::class, 'triggerLightUpdate']);
     Route::get('/temperature-humidity-sensor/trigger-update', [TemperatureHumiditySensorController::class, 'triggerThUpdate']);
     Route::get('/pir-sensor/trigger-update', [PirController::class, 'triggerPirUpdate']);
+    Route::get('/weight-sensor/trigger-update', [WeightSensorController::class, 'triggerLastRegisters']);
