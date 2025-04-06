@@ -33,12 +33,10 @@ class SensorsController extends Controller
     
         $temperatureSensors = TemperatureHumiditySensor::where('area_id', $area_id)->orderBy('event_date', 'desc')->first();
         $pirSensors = Pir::where('area_id', $area_id)->orderBy('event_date', 'desc')->first();
-        $lightSensors = LightSensor::where('area_id', $area_id)->orderBy('event_date', 'desc')->first();
     
         $sensors = [
             'temperature_sensors' => $temperatureSensors,
             'pir_sensors' => $pirSensors,
-            'light_sensors' => $lightSensors,
         ];
     
         return response()->json($sensors);

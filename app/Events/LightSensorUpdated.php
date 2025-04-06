@@ -1,34 +1,28 @@
 <?php
-
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 
 class LightSensorUpdated implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
 
-    public $sensorData;
+    public $lightData;
 
-    public function __construct($sensorData)
+    public function __construct($lightData)
     {
-        $this->sensorData = $sensorData;
+        $this->lightData = $lightData;
     }
 
     public function broadcastOn()
     {
-        return new Channel('sensor-updates');
+        return new Channel('light-sensor-updates');
     }
 
-    public function broadcastWith()
+    public function broadcastAs()
     {
-        return [
-            'sensorType' => 'light',
-            'data' => $this->sensorData
-        ];
+        return 'LightSensorUpdated';
     }
 }
