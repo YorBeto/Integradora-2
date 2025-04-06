@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('password')->nullable();
             $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
-            $table->time('reading_time')->nullable();
-            $table->time('response_time')->nullable();
+            $table->integer('reading_time')->nullable();
+            $table->integer('response_time')->nullable();
             $table->timestamps();
         });
     }
