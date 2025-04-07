@@ -15,6 +15,7 @@ use App\Http\Controllers\TemperatureHumiditySensorController;
 use App\Http\Controllers\PirController;
 use App\Http\Controllers\WeightSensorController;
 use App\Http\Controllers\SensorsController;
+use App\Http\Controllers\RfidSensorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +95,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
     // Weight Sensor
     Route::get('/weight-sensor', [WeightSensorController::class, 'lastRegisters']);
+
+    //Rfid Sensor
+    Route::get('/rfid-sensor', [RfidSensorController::class, 'getAll']);
+    Route::get('/rfid-codes', [RfidSensorController::class, 'getAllRfidCodes']);
+    Route::get('/assigned-rfid-codes', [RfidSensorController::class, 'getAssignedRfidCodes']);
 
     //get areas
     Route::get('/areas', [DeviceController::class, 'getAreas']);

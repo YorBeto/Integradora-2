@@ -24,5 +24,4 @@ class Rfid extends Model
     // Opcional: si quieres cambiar el nombre de la clave primaria o su tipo
     protected $primaryKey = '_id';
 
-
 }
