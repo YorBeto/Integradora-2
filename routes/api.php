@@ -111,5 +111,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::get('/temperature-humidity-sensor/trigger-update', [TemperatureHumiditySensorController::class, 'triggerThUpdate']);
     Route::get('/pir-sensor/trigger-update', [PirController::class, 'triggerPirUpdate']);
     Route::get('/weight-sensor/trigger-update', [WeightSensorController::class, 'triggerLastRegisters']);
+    Route::get('/rfid-sensor/trigger-update', [LockSensorController::class, 'triggerLockUpdate']);
 
     Route::get('/lock-sensor/ultimos-accesos', [LockSensorController::class, 'ultimosAccesos']);
