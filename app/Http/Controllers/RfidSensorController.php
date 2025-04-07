@@ -7,5 +7,5 @@ use App\Models\Rfid;
 
 class RfidSensorController extends Controller
 {
-    //
+    
 }

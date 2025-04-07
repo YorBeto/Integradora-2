@@ -15,6 +15,7 @@ use App\Http\Controllers\TemperatureHumiditySensorController;
 use App\Http\Controllers\PirController;
 use App\Http\Controllers\WeightSensorController;
 use App\Http\Controllers\SensorsController;
+use App\Http\Controllers\LockSensorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,3 +105,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::get('/temperature-humidity-sensor/trigger-update', [TemperatureHumiditySensorController::class, 'triggerThUpdate']);
     Route::get('/pir-sensor/trigger-update', [PirController::class, 'triggerPirUpdate']);
     Route::get('/weight-sensor/trigger-update', [WeightSensorController::class, 'triggerLastRegisters']);
+
+    Route::get('/lock-sensor/ultimos-accesos', [LockSensorController::class, 'ultimosAccesos']);
