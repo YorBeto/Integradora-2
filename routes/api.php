@@ -14,7 +14,7 @@ use App\Http\Controllers\LightSensorController;
 use App\Http\Controllers\TemperatureHumiditySensorController;
 use App\Http\Controllers\PirController;
 use App\Http\Controllers\WeightSensorController;
-
+use App\Http\Controllers\SensorsController;
 
 /*
 |--------------------------------------------------------------------------

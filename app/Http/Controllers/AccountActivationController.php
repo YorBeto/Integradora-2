@@ -16,6 +16,6 @@ class AccountActivationController extends Controller
         $user->activate = true;
         $user->save();
 
-        return redirect()->to('http://smartgames.tech/login');
+        return redirect()->to('https://smartgames.tech/login');
     }
 }
